@@ -119,7 +119,7 @@ elseif((owner():lastSaid()=="!hads")){
 
 elseif((owner():lastSaid()=="!repair")){
     hideChat(1)
-		              tardisSelfrepair()
+		              TARDIS:tardisSelfrepair()
     }
 
 

@@ -1,9 +1,11 @@
 ### TARDIS-E2
 GMOD Wiremod E2 for Dr Matt's TARDIS addon
 
+
 ## **Instructions**:
-- Wire the E2 to the exterior (outside) of Dr Matt's TARDIS
+- Wire the E2 to the exterior (outside) of your TARDIS
 - Issue commands to the E2 by using chat
+
 
 ## **Chat commands**:
 
@@ -33,8 +35,6 @@ Find all TARDISes in the map, choose one at random, and dematerialise inside it
 **!status**
 
 **!me**
-
-
 
 
 

@@ -78,7 +78,7 @@ elseif(COMMAND=="!esc") {
             }
             if(TARDIS:tardisLongflighted()==0){
 		              TARDIS:tardisLongflight()
-	           }
+	        }
     TARDIS:tardisFastDemat()
     }
 
@@ -161,6 +161,9 @@ elseif(COMMAND=="!hide") {
             if(TARDIS:tardisLocked()==0){
                 TARDIS:tardisLock()
             }
+            if(TARDIS:tardisLongflighted()==0){
+		              TARDIS:tardisLongflight()
+	        }
             if(TARDIS:tardisIsomorphic()==0){
 		              TARDIS:tardisIsomorph()
             }

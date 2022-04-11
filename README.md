@@ -44,6 +44,8 @@ Find all TARDISes in the map, choose one at random, and dematerialise inside it
 
 **V11**
 - Removed all holograms
+- Renamed "!warp" command to "!barge" (because it 'barges' into other TARDISes)
+- Added checks to power on TARDIS for all 'active' commands (commands which instruct the TARDIS to do something or go somewhere)
 
 **v10**
 

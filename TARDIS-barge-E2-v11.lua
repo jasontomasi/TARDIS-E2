@@ -6,14 +6,21 @@
 runOnChat(1)
 
 
-if((owner():lastSaid()=="!barge")&chatClk(owner())){
+if(chatClk(owner())) {
+    LastSaid = owner():lastSaid():lower():explode(" ")
+    COMMAND = LastSaid[1,string]
+    ARGUMENT1 = LastSaid[2,string]
+
+
+if(COMMAND=="!barge") {
     hideChat(1)
-    
     OWNER=TARDIS:owner()
-    
- if(TARDIS:tardisPhyslocked()==0){
-		TARDIS:tardisPhyslock()
-	}
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
+             if(TARDIS:tardisPhyslocked()==0){
+		          TARDIS:tardisPhyslock()
+            }
 	if(TARDIS:tardisLongflighted()==1){
 		TARDIS:tardisLongflight()
 	}
@@ -61,9 +68,11 @@ if((owner():lastSaid()=="!barge")&chatClk(owner())){
     }
 
 
-elseif((owner():lastSaid()=="!esc")){
+elseif(COMMAND=="!esc") {
     hideChat(1)
-    
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
             if(TARDIS:tardisLocked()==0){
 		              TARDIS:tardisLock()
             }
@@ -71,20 +80,21 @@ elseif((owner():lastSaid()=="!esc")){
 		              TARDIS:tardisLongflight()
 	           }
     TARDIS:tardisFastDemat()
-    spriteEnable(1,0)
-    spriteEnable(2,0)
     }
 
 
-elseif((owner():lastSaid()=="!lock")){
+elseif(COMMAND=="!lock") {
     hideChat(1)
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
             if(TARDIS:tardisLocked()==0){
 		              TARDIS:tardisLock()
             }
     }
 
 
-elseif((owner():lastSaid()=="!mat")){
+elseif(COMMAND=="!mat") {
     hideChat(1)
             if(TARDIS:tardisInVortex()==1){
 		              TARDIS:tardisMaterialise()
@@ -92,21 +102,24 @@ elseif((owner():lastSaid()=="!mat")){
     }
 
 
-elseif((owner():lastSaid()=="!health")){
+elseif(COMMAND=="!health") {
     hideChat(1)
                 print("Health: "+TARDIS:tardisHealth()+"%")
     }
 
 
-elseif((owner():lastSaid()=="!power")){
+elseif(COMMAND=="!power") {
     hideChat(1)
 		              TARDIS:tardisPower()
     }
 
 
-elseif((owner():lastSaid()=="!hads")){
+elseif(COMMAND=="!hads") {
     hideChat(1)
-		              TARDIS:tardisHADS()
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
+		          TARDIS:tardisHADS()
                 
             if(TARDIS:tardisIsHADS()==1){
 		              print("HADS: ON")
@@ -117,15 +130,17 @@ elseif((owner():lastSaid()=="!hads")){
     }
 
 
-elseif((owner():lastSaid()=="!repair")){
+elseif(COMMAND=="!repair") {
     hideChat(1)
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
 		              TARDIS:tardisSelfrepair()
     }
 
 
-elseif((owner():lastSaid()=="!where")){
+elseif(COMMAND=="!where") {
     hideChat(1)
-    
             if(TARDIS:tardisInVortex()==1){
 		              print("Location: Vortex")
             }
@@ -138,7 +153,7 @@ elseif((owner():lastSaid()=="!where")){
     }
 
 
-elseif((owner():lastSaid()=="!hide")){
+elseif(COMMAND=="!hide") {
     hideChat(1)
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
@@ -149,16 +164,24 @@ elseif((owner():lastSaid()=="!hide")){
             if(TARDIS:tardisIsomorphic()==0){
 		              TARDIS:tardisIsomorph()
             }
-            
-            
+
             TARDIS:tardisFastDemat()
     }
 
 
-elseif((owner():lastSaid()=="!go")){
+elseif(COMMAND=="!return") {
     hideChat(1)
             if(TARDIS:tardisPowered()==0){
-		              print("Power: OFF")
+		              TARDIS:tardisPower()
+            }
+            TARDIS:tardisFastReturn()
+    }
+
+
+elseif(COMMAND=="!go") {
+    hideChat(1)
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
             }
             if(TARDIS:tardisLongflighted()==1){
 		              TARDIS:tardisLongflight()
@@ -171,7 +194,7 @@ elseif((owner():lastSaid()=="!go")){
     }
 
 
-elseif((owner():lastSaid()=="!status")){
+elseif(COMMAND=="!status") {
     hideChat(1)
 		          if(TARDIS:tardisInVortex()==1){
 		              print("Location: Vortex")
@@ -202,7 +225,7 @@ elseif((owner():lastSaid()=="!status")){
     }
 
 
-elseif((owner():lastSaid()=="!me")){
+elseif(COMMAND=="!me") {
     hideChat(1)
             WHEREAMI = owner():pos()
             NEARPLAYER = WHEREAMI + vec(-50,-50,0)
@@ -210,6 +233,7 @@ elseif((owner():lastSaid()=="!me")){
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
+            # REQUIRED: Door is first locked (closed) to enable demat because there is no E2 hook to close the exterior door
             if(TARDIS:tardisLocked()==0){
 		              TARDIS:tardisLock()
             }
@@ -219,15 +243,62 @@ elseif((owner():lastSaid()=="!me")){
 	           if(TARDIS:tardisLongflighted()==1){
 		              TARDIS:tardisLongflight()
             }
-            # REQUIRED: Door is first locked to enable demat, then unlocked in preparation of the player
             	if(TARDIS:tardisLocked()==1){
 		              TARDIS:tardisLock()
             }
             if(TARDIS:tardisInVortex()==1){
-                TARDIS:tardisSetDestination(NEARPLAYER, ang(0,0,0))
-                TARDIS:tardisMaterialise()
+					TARDIS:tardisSetDestination(NEARPLAYER, ang(0,0,0))
+					TARDIS:tardisMaterialise()
             }
             elseif(TARDIS:tardisInVortex()==0){
 		              TARDIS:tardisDemat(NEARPLAYER, ang(0,0,0))
             }
     }
+
+
+elseif(COMMAND=="!target") {
+	if(LastSaid[2,string]){
+	hideChat(1)
+		PERSON = findPlayerByName(ARGUMENT1)
+			if(PERSON:isValid()){
+			NEARSUBJECT = PERSON:pos()
+			NEARSUBJECT = NEARSUBJECT + vec(-50,-50,0)
+			print("Going to: "+PERSON:name())
+
+            if(TARDIS:tardisPowered()==0){
+		              TARDIS:tardisPower()
+            }
+            if(TARDIS:tardisLocked()==0){
+		              TARDIS:tardisLock()
+            }
+            if(TARDIS:tardisPhyslocked()==0){
+		              TARDIS:tardisPhyslock()
+            }
+	        if(TARDIS:tardisLongflighted()==1){
+		              TARDIS:tardisLongflight()
+            }
+            # REQUIRED: Door is first locked to enable demat, then unlocked in preparation of the player
+            if(TARDIS:tardisLocked()==1){
+		              TARDIS:tardisLock()
+            }
+            if(TARDIS:tardisInVortex()==1){
+					TARDIS:tardisSetDestination(NEARSUBJECT, ang(0,0,0))
+					TARDIS:tardisMaterialise()
+            }
+            elseif(TARDIS:tardisInVortex()==0){
+		              TARDIS:tardisDemat(NEARSUBJECT, ang(0,0,0))
+            }
+
+
+		}
+
+		else {
+            print("Unable to target this person!")
+        }
+
+    }
+
+}
+}
+
+

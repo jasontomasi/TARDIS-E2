@@ -54,6 +54,8 @@ Prints info on the TARDIS:
 **!me**
 Enables physlock to prevent it falling through the floor if you are currently in another TARDIS, and comes to you (will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
 
+**!target (playername)**
+Targets players by name (again, will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
 
 ----------------------
 

@@ -19,7 +19,7 @@ Closes the front door, turns on vortex mode, and uses fast dematerialisation to 
 Locks the exterior door
 
 **!mat**
-Materialises te TARDIS
+Materialises the TARDIS
 
 **!health**
 Prints the health percentage of the TARDIS
@@ -57,7 +57,11 @@ Enables physlock to prevent it falling through the floor if you are currently in
 **!target (playername)**
 Targets players by name (again, will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
 
-----------------------
+**!gps**
+Targets a random wiremod GPS, travels to it, and materialises slightly above it
+
+
+----------------------------------
 
 ## **Changelog:**
 

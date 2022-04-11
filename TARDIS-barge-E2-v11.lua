@@ -197,6 +197,45 @@ elseif(COMMAND=="!go") {
     }
 
 
+elseif(COMMAND=="!gps") {
+    hideChat(1)
+    FINDGPS = findByClass("gmod_wire_gps")
+
+	if(FINDGPS > 0) {
+            if(TARDIS:tardisPowered()==0){
+				        TARDIS:tardisPower()
+            }
+            if(TARDIS:tardisLocked()==0){
+		              TARDIS:tardisLock()
+            }
+            if(TARDIS:tardisPhyslocked()==0){
+		          TARDIS:tardisPhyslock()
+            }
+            if(TARDIS:tardisLongflighted()==1){
+		              TARDIS:tardisLongflight()
+            }
+    GPSFindAll = findSortByDistance(owner():pos())
+    GPSCount = findToArray():count()
+    Randomchoice = randint(1,GPSCount)
+    GPSLOCATION1 = findResult(Randomchoice)
+    GPSLOCATION2 = GPSLOCATION1:toWorld(vec(0,0,2))
+
+            if(TARDIS:tardisInVortex()==1){
+					TARDIS:tardisSetDestination(GPSLOCATION2, ang(0,0,0))
+					TARDIS:tardisMaterialise()
+            }
+            if(TARDIS:tardisInVortex()==0){
+		              TARDIS:tardisDemat(GPSLOCATION2, ang(0,0,0))
+            }
+	}
+
+	else {
+			print("Can't find GPS to lock on to.")
+	}
+
+	}
+
+
 elseif(COMMAND=="!status") {
     hideChat(1)
 		          if(TARDIS:tardisInVortex()==1){

@@ -1,5 +1,27 @@
+This repo contains multiple Garry's Mod (GMOD) Wiremod E2 for Dr Matt's TARDIS addon
+
+
+### TARDIS-landing-bay
+This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other TARDISes on the map by making them to materialise on the 'landing bays' (wiremod GPS chips)
+
+
+## **Instructions**:
+- Manually spawn enough wiremod GPS entities near the E2 chip (one for each TARDIS on the map)
+- Issue commands to the E2 by using chat
+OR
+- Issue commands by the wire inputs (wire buttons directly to the chip)
+
+
+## **Chat commands**:
+
+**!recall**
+Find all TARDISes in the map, (forecefully) ready them for travel, and send them to the landing bays
+
+
+
+
 ### TARDIS-E2
-GMOD Wiremod E2 for Dr Matt's TARDIS addon
+This E2 allows you to control the functions of one TARDIS (your main TARDIS)
 
 
 ## **Instructions**:

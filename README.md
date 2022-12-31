@@ -72,7 +72,10 @@ Prints info on the TARDIS:
 - Cloak (on or not)
 - HADS (on or not)
 - Repairing (on or not)
+- Health %
 - Location (last known)
+- TARDIS size (dimensions of exterior shell)
+- Number of TARDISes spawned on the map
 
 **!me**
 Enables physlock to prevent it falling through the floor if you are currently in another TARDIS, and comes to you (will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
@@ -81,7 +84,7 @@ Enables physlock to prevent it falling through the floor if you are currently in
 Targets players by name (again, will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
 
 **!gps**
-Targets a random wiremod GPS, travels to it, and materialises slightly above it
+Targets a random wiremod GPS, travels to it, and materialises on it
 
 
 ----------------------------------
@@ -89,9 +92,5 @@ Targets a random wiremod GPS, travels to it, and materialises slightly above it
 ## **Changelog:**
 
 **V11**
-- Removed all holograms
-- Renamed "!warp" command to "!barge" (because it 'barges' into other TARDISes)
-- Added checks to power on TARDIS for all 'active' commands (commands which instruct the TARDIS to do something or go somewhere)
-
-**v10**
+- 
 

@@ -1,0 +1,162 @@
+@name SIDRAT landing bay
+@inputs RECALL
+@persist TargetTardis:entity TargetGPS:vector Tardises:array GPSes:array Index:number
+
+runOnChat(1)
+
+
+if(first()){
+
+    Index = 1
+
+    print("This E2 uses Wiremod GPS's as TARDIS landing pads.")
+    print("You must manually spawn a sufficient amount near the E2 chip")
+    print("One chip for each TARDIS")
+
+
+function funcRecallSidrats() {
+
+Index = 1
+
+    findByClass("gmod_tardis")
+    Tardises = findToArray()
+    TardisCount = findToArray():count()
+
+    findByClass("gmod_wire_gps")
+    GPSes = findToArray()
+    GPSCount = findToArray():count()
+
+    if (GPSCount < TardisCount) {
+    print("TARDISES: ", TardisCount, ". GPS chips: ", GPSCount, ". Please spawn ", TardisCount-GPSCount, " more.")
+    }
+
+    if (GPSCount >= TardisCount) {
+    print("TARDISES: ", TardisCount, ". GPS chips: ", GPSCount, ". Ready to proceed...")
+    }
+
+    if (TardisCount == 0) {
+    print("There are no TARDISES in the universe.")
+    }
+
+foreach(K,TargetTardis:entity = Tardises) {
+
+    ChosenGPS = GPSes[Index,entity]
+    TargetGPS = ChosenGPS:pos()
+    GPSBoxTop = ChosenGPS:aabbMax():z()
+
+if (TargetTardis:tardisHealth() > 0 ) {
+
+    print("TARDIS",Index,"assigned to landing bay.")
+
+    TardisHeight = TargetTardis:boxSize():z()
+    TardisHalfHeight = TardisHeight / 2
+
+# CHECK IF TARDIS ALREADY THERE (in future, whether any are there via 'findInSphere')
+
+if (TargetTardis:pos() == TargetGPS) {
+
+}
+
+elseif (TargetTardis:pos() != TargetGPS) {
+
+# HOLOGRAMS
+
+    holoCreate(Index)
+    holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
+    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+10,TargetTardis:boxSize():y()+10,TargetTardis:boxSize():z()+10))
+    holoAng(Index, ang(0,0,0))
+    holoModel(Index, "cube")
+    holoMaterial(Index, "models/props_combine/cit_splode1")
+    holoColor(Index, vec(255,100,255),255)
+    
+    
+    timer("deleteholo",18000)
+
+    if(TargetTardis:tardisPowered()==0) {
+		TargetTardis:tardisPower()
+            }
+    if(TargetTardis:tardisPhyslocked()==0) {
+		TargetTardis:tardisPhyslock()
+            }
+    if(TargetTardis:tardisLongflighted()==1) {
+		TargetTardis:tardisLongflight()
+	        }
+    if(TargetTardis:tardisLocked()==0) {
+		TargetTardis:tardisLock()
+	        }
+    if(TargetTardis:tardisVisible()==0) {
+		TargetTardis:tardisPhase()
+	        }
+    if(TargetTardis:tardisInVortex()==1) {
+		TargetTardis:tardisSetDestination(TargetGPS, ang(0,0,0))
+		TargetTardis:tardisMaterialise()
+			}
+    if(TargetTardis:tardisInVortex()==0) {
+		TargetTardis:tardisDemat(TargetGPS, ang(0,0,0))
+			}
+
+}
+
+}
+
+elseif (TargetTardis:tardisHealth() == 0 ) {
+    
+	print("Damaged TARDIS located",TargetTardis:pos(),"Sent self-repair command.")
+    
+    if(TargetTardis:tardisSelfrepairing()==0) {
+		TargetTardis:tardisSelfrepair()
+    }
+
+}
+
+
+Index++
+
+}
+
+}
+
+# END OF funcRecallSidrats
+
+
+}
+
+# END OF FIRST
+
+
+
+
+
+# BEGIN CHAT MONITOR
+
+if(chatClk(owner())) {
+    LastSaid = owner():lastSaid():lower():explode(" ")
+    COMMAND = LastSaid[1,string]
+    ARGUMENT1 = LastSaid[2,string]
+
+
+if(COMMAND=="!recall") {
+    hideChat(1)
+	funcRecallSidrats()
+}
+
+elseif(COMMAND=="!esc") {
+    hideChat(1)
+    }
+
+}
+
+
+
+# BEGIN INPUT BUTTONS
+
+if (RECALL&~RECALL) {
+	funcRecallSidrats()
+}
+
+
+
+if(clk("deleteholo")) {
+    holoDeleteAll()
+}
+

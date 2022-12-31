@@ -8,7 +8,7 @@ This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other T
 ### Instructions:
 - Manually spawn enough wiremod GPS entities near the E2 chip (one for each TARDIS on the map)
 - Issue commands to the E2 by using chat
-OR
+**OR**
 - Issue commands by the wire inputs (wire buttons directly to the chip)
 
 

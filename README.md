@@ -15,7 +15,7 @@ This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other T
 ### Chat commands:
 
 **!recall**
-Find all TARDISes in the map, (forecefully) ready them for travel, and send them to the landing bays
+Find all TARDISes in the map, (forecefully) ready them for travel, and send them to the landing bays. If any TARDISes are at 0% health, the E2 will start self-repair on them.
 
 
 ---

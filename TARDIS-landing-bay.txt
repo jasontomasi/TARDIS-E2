@@ -1,63 +1,69 @@
 @name SIDRAT landing bay
-@inputs RECALL
-@persist TargetTardis:entity TargetGPS:vector Tardises:array GPSes:array Index:number
+@inputs RECALL RETURN
+@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector
 
 runOnChat(1)
 
-
 if(first()){
 
-    Index = 1
+# CUSTOMISE THESE OPTIONS 
 
-    print("This E2 uses Wiremod GPS's as TARDIS landing pads.")
-    print("You must manually spawn a sufficient amount near the E2 chip")
-    print("One chip for each TARDIS")
+    LandingBayRange = 1024
+    LandingBayMaterial = "effects/screen_monitor_blank"
+    LandingBayColor = vec(255,255,255)
+}
+
+
+
+function funcFindSidrats() {
+    findByClass("gmod_tardis")
+    Tardises = findToArray()
+    TardisCount = findToArray():count()
+}
+
+
+
+function funcFindLandingBay() {
+    findByClass("gmod_wire_gps")
+    findClipToSphere(entity():pos(),LandingBayRange)
+    GPSes = findToArray()
+    GPSCount = findToArray():count()
+}
+
 
 
 function funcRecallSidrats() {
 
 Index = 1
 
-    findByClass("gmod_tardis")
-    Tardises = findToArray()
-    TardisCount = findToArray():count()
-
-    findByClass("gmod_wire_gps")
-    GPSes = findToArray()
-    GPSCount = findToArray():count()
-
     if (GPSCount < TardisCount) {
-    print("TARDISES: ", TardisCount, ". GPS chips: ", GPSCount, ". Please spawn ", TardisCount-GPSCount, " more.")
+    print("TARDISES: ", TardisCount, "GPS chips: ", GPSCount, "Please spawn", TardisCount-GPSCount, "more.")
+    }
+    
+    if (GPSCount >= TardisCount & (TardisCount > 0)) {
+    print("OK. TARDISES: ", TardisCount, "GPS chips: ", GPSCount)
     }
 
-    if (GPSCount >= TardisCount) {
-    print("TARDISES: ", TardisCount, ". GPS chips: ", GPSCount, ". Ready to proceed...")
-    }
-
-    if (TardisCount == 0) {
-    print("There are no TARDISES in the universe.")
-    }
-
-foreach(K,TargetTardis:entity = Tardises) {
+foreach(Index,TargetTardis:entity = Tardises) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
+    #print("Current bay vector:",TargetGPS)
+
 if (TargetTardis:tardisHealth() > 0 ) {
 
-    print("TARDIS",Index,"assigned to landing bay.")
+    print("TARDIS",Index,"assigned to landing bay",Index)
 
     TardisHeight = TargetTardis:boxSize():z()
     TardisHalfHeight = TardisHeight / 2
 
 # CHECK IF TARDIS ALREADY THERE (in future, whether any are there via 'findInSphere')
 
-if (TargetTardis:pos() == TargetGPS) {
 
-}
 
-elseif (TargetTardis:pos() != TargetGPS) {
+    if (TargetTardis:pos() != TargetGPS) {
 
 # HOLOGRAMS
 
@@ -66,11 +72,10 @@ elseif (TargetTardis:pos() != TargetGPS) {
     holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+10,TargetTardis:boxSize():y()+10,TargetTardis:boxSize():z()+10))
     holoAng(Index, ang(0,0,0))
     holoModel(Index, "cube")
-    holoMaterial(Index, "models/props_combine/cit_splode1")
-    holoColor(Index, vec(255,100,255),255)
+    holoMaterial(Index, LandingBayMaterial)
+    holoColor(Index, LandingBayColor,255)
     
-    
-    timer("deleteholo",18000)
+    timer("deleteholo",16000)
 
     if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
@@ -113,15 +118,34 @@ elseif (TargetTardis:tardisHealth() == 0 ) {
 Index++
 
 }
+# END of foreach loop
+
+
+
+
+findClearBlackList()
+findClearBlackClassList()
+
+findClearWhiteList()
+findClearWhiteClassList()
 
 }
 
-# END OF funcRecallSidrats
 
 
+function funcClearLandingBay() {
+
+    foreach(Index,TargetTardis:entity = Tardises) {
+
+				    if(TargetTardis:tardisLongflighted()==0) {
+		          TargetTardis:tardisLongflight()
+	        }
+        
+        TargetTardis:tardisFastDemat()
+    }
+	
 }
 
-# END OF FIRST
 
 
 
@@ -137,11 +161,12 @@ if(chatClk(owner())) {
 
 if(COMMAND=="!recall") {
     hideChat(1)
-	funcRecallSidrats()
+    timer("TimerOne",2000)
 }
 
-elseif(COMMAND=="!esc") {
+elseif(COMMAND=="!clear") {
     hideChat(1)
+	funcClearLandingBay()
     }
 
 }
@@ -151,12 +176,35 @@ elseif(COMMAND=="!esc") {
 # BEGIN INPUT BUTTONS
 
 if (RECALL&~RECALL) {
-	funcRecallSidrats()
+	timer("TimerOne",1000)
+}
+
+if (RETURN&~RETURN) {
+	funcClearLandingBay()
 }
 
 
+
+
+
+
+
+# BEGIN TIMER SECTION
+
+if(clk("TimerOne")) {
+    funcFindSidrats()
+    timer("TimerTwo",1000)
+}
+
+if(clk("TimerTwo")) {
+    funcFindLandingBay()
+    timer("TimerThree",1000)
+}
+
+if(clk("TimerThree")) {
+    funcRecallSidrats()
+}
 
 if(clk("deleteholo")) {
     holoDeleteAll()
 }
-

@@ -52,7 +52,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
     #print("Current bay vector:",TargetGPS)
 
-if (TargetTardis:tardisHealth() > 0 ) {
+if (TargetTardis:tardisHealth() > 20 ) {
 
     print("TARDIS",Index,"assigned to landing bay",Index)
 
@@ -104,9 +104,9 @@ if (TargetTardis:tardisHealth() > 0 ) {
 
 }
 
-elseif (TargetTardis:tardisHealth() == 0 ) {
+elseif (TargetTardis:tardisHealth() <= 20 ) {
     
-	print("Damaged TARDIS located",TargetTardis:pos(),"Sent self-repair command.")
+	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
     
     if(TargetTardis:tardisSelfrepairing()==0) {
 		TargetTardis:tardisSelfrepair()

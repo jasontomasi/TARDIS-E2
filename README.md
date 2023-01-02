@@ -8,7 +8,8 @@ This E2 shows a hologram of all TARDISes on the map, and colour codes them accor
 ### Instructions:
 - Spawn it on a flat surface
 
-Color codes:
+
+Hologram colors:
 
 - **FLICKERING**: In vortex/dematerialising/rematerialising
 

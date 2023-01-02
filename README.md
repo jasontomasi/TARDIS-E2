@@ -1,6 +1,22 @@
 This repo contains multiple Garry's Mod (GMOD) Wiremod E2 for Dr Matt's TARDIS addon
 
 
+
+# TARDIS-holomap
+This E2 shows a hologram of all TARDISes on the map, and colour codes them according to various factors.
+
+### Instructions:
+Spawn it on a flat surface
+
+Currently:
+In vortex/dematerialising/rematerialising = **FLICKERING**
+Materialised = **BLUE**
+Low health = **RED**
+
+
+---
+
+
 # TARDIS-landing-bay
 This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other TARDISes on the map by making them to materialise on the 'landing bays' (wiremod GPS chips)
 

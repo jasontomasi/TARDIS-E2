@@ -1,7 +1,11 @@
 @name Holo Radar
 @inputs
 @outputs
-@persist TardisCount:number
+@persist TardisCount:number Tardises:array
+
+
+interval(2000)
+
 
 if (first()) {
 
@@ -10,13 +14,9 @@ if (first()) {
 	# Black backdrop for the other holograms
 	holoCreate(0,entity():pos() + vec(0,0,5), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
-	holoAlpha(0,50)
+	holoAlpha(0,200)
 
- timer("start", 2000)
-
-}
-
-
+timer("start", 1000)
 
 function funcFindTargets() {
 
@@ -25,35 +25,46 @@ function funcFindTargets() {
     TardisCount = Tardises:count()
     Excess = TardisCount + 1
 
+    for(A = Excess, 20) {
+        holoDelete(A)
+    }
+
+ timer("start", 8000)
+}
+
+
+}
+
+
+
 foreach(Index,TargetTardis:entity = Tardises) {
 
-	holoCreate(Index, entity():pos(), vec(0.1,0.1,0.1) )
+	holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
 	holoAlpha(Index, 255)
 	holoColor(Index, vec(255,255,255))
 	# Get position of target, localize the vector, place at expression chip, and scale down
-	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,5) )
+	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,10) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
 	holoAng(Index,TargetTardis:angles())
 	holoRenderFX(Index,0)
 
-if (TargetTardis:tardisHealth() < 50) {
+if (TargetTardis:tardisHealth() < 20) {
     holoColor(Index, vec(255,0,0))
     holoRenderFX(Index,9)
     }
-if (TargetTardis:tardisInVortex() == 1 | TargetTardis:tardisMoving() == 1) {
+if (TargetTardis:tardisInVortex() == 1) {
     holoMaterial(Index, "effects/minescreen_static01_")
-    holoPos(Index, entity():pos() + vec(randint(-60,60), randint(-60,60), randint(1,40)))
+    holoPos(Index, entity():pos() + vec(randint(-60,60), randint(-60,60), randint(20,40)))
+    holoAng(Index, ang(randint(0,45),randint(0,45),randint(0,45)))
     }
-
+if (TargetTardis:tardisMoving() == 1) {
+    holoColor(Index, vec(255,255,0))
+    holoRenderFX(Index,9)
+    }
 }
 
-    for(A = Excess, 50) {
-        holoDelete(A)
-    }
 
- timer("start", 4000)
-}
 
 
 

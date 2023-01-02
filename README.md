@@ -82,7 +82,7 @@ Toggles self-repair on and off
 Prints info about where your TARDIS is (in the vortex, or coordinates of world location, or whether currently in demat/remat process)
 
 **!hide**
-Same as the "!esc" command but also enabled isomorphic security on the console
+Same as the "!esc" command but also enables isomorphic security on the console
 
 **!go**
 Disables vortex mode and dematerialises/rematerialises at location "0,0,0" of the map (will change this in future because on some maps, "0,0,0" is not a desirable place to be!)
@@ -97,7 +97,7 @@ Prints info on the TARDIS:
 - Health %
 - Location (last known)
 - TARDIS size (dimensions of exterior shell)
-- Number of TARDISes spawned on the map
+- Number of TARDISes spawned on the map (including other people's)
 
 **!me**
 Enables physlock to prevent it falling through the floor if you are currently in another TARDIS, and comes to you (will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)

@@ -52,9 +52,9 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
     #print("Current bay vector:",TargetGPS)
 
-if (TargetTardis:tardisHealth() > 20 ) {
+if (TargetTardis:tardisHealth() > 0 ) {
 
-    print("TARDIS",Index,"assigned to landing bay",Index)
+    print("TARDIS",Index,"assigned landing bay",Index)
 
     TardisHeight = TargetTardis:boxSize():z()
     TardisHalfHeight = TardisHeight / 2
@@ -70,12 +70,13 @@ if (TargetTardis:tardisHealth() > 20 ) {
     holoCreate(Index)
     holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
     holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+10,TargetTardis:boxSize():y()+10,TargetTardis:boxSize():z()+10))
-    holoAng(Index, ang(0,0,0))
+    holoAng(Index, (entity():pos() - TargetGPS):toAngle())
     holoModel(Index, "cube")
     holoMaterial(Index, LandingBayMaterial)
     holoColor(Index, LandingBayColor,255)
     
     timer("deleteholo",16000)
+    timer("repaironarrival",20000)
 
     if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
@@ -97,17 +98,18 @@ if (TargetTardis:tardisHealth() > 20 ) {
 		TargetTardis:tardisMaterialise()
 			}
     if(TargetTardis:tardisInVortex()==0) {
-		TargetTardis:tardisDemat(TargetGPS, ang(0,0,0))
+		TargetTardis:tardisDemat(TargetGPS, (entity():pos() - TargetGPS):toAngle())
+    
 			}
 
 }
 
 }
 
-elseif (TargetTardis:tardisHealth() <= 20 ) {
+elseif (TargetTardis:tardisHealth() == 0 ) {
     
 	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
-    
+ 
     if(TargetTardis:tardisSelfrepairing()==0) {
 		TargetTardis:tardisSelfrepair()
     }
@@ -208,3 +210,23 @@ if(clk("TimerThree")) {
 if(clk("deleteholo")) {
     holoDeleteAll()
 }
+
+if(clk("repaironarrival")) {
+    foreach(Index,TargetTardis:entity = Tardises) {
+    
+        if (TargetTardis:tardisHealth() < 20 ) {
+            TargetTardis:tardisSelfrepair()
+            print("TARDIS",Index,"REPAIRING:",TargetTardis:pos())
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+

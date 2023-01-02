@@ -10,7 +10,7 @@ if (first()) {
 	# Black backdrop for the other holograms
 	holoCreate(0,entity():pos() + vec(0,0,5), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
-	holoAlpha(0,200)
+	holoAlpha(0,50)
 
  timer("start", 2000)
 
@@ -34,14 +34,16 @@ foreach(Index,TargetTardis:entity = Tardises) {
 	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,5) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
+	holoAng(Index,TargetTardis:angles())
+	holoRenderFX(Index,0)
 
 if (TargetTardis:tardisHealth() < 50) {
     holoColor(Index, vec(255,0,0))
+    holoRenderFX(Index,9)
     }
 if (TargetTardis:tardisInVortex() == 1 | TargetTardis:tardisMoving() == 1) {
-    holoAlpha(Index, 200)
     holoMaterial(Index, "effects/minescreen_static01_")
-    holoPos(Index, entity():pos() + vec(randint(25), randint(25), 50))
+    holoPos(Index, entity():pos() + vec(randint(-60,60), randint(-60,60), randint(1,40)))
     }
 
 }

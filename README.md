@@ -6,7 +6,7 @@ This repo contains multiple Garry's Mod (GMOD) Wiremod E2 for Dr Matt's TARDIS a
 This E2 shows a hologram of all TARDISes on the map, and colour codes them according to various factors.
 
 ### Instructions:
-Spawn it on a flat surface
+- Spawn it on a flat surface
 
 Currently:
 In vortex/dematerialising/rematerialising = **FLICKERING**

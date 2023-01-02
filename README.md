@@ -54,6 +54,8 @@ This E2 allows you to control the functions of one TARDIS (your main TARDIS)
 
 ### Chat commands:
 
+**NOTE: most of these commands will first check whether the TARDIS power is on, then turn it on**
+
 **!barge**
 Find all TARDISes in the map, choose one at random, and dematerialise inside it
 
@@ -62,6 +64,9 @@ Closes the front door, turns on vortex mode, and uses fast dematerialisation to 
 
 **!lock**
 Locks the exterior door
+
+**!phys**
+Toggles the physical lock
 
 **!mat**
 Materialises the TARDIS
@@ -81,11 +86,14 @@ Toggles self-repair on and off
 **!where**
 Prints info about where your TARDIS is (in the vortex, or coordinates of world location, or whether currently in demat/remat process)
 
+**!return**
+Does the fast-return process on the TARDIS
+
 **!hide**
 Same as the "!esc" command but also enables isomorphic security on the console
 
-**!go**
-Disables vortex mode and dematerialises/rematerialises at location "0,0,0" of the map (will change this in future because on some maps, "0,0,0" is not a desirable place to be!)
+**!go <PLAYERNAME>**
+Targets players by name and demats/mats the TARDIS at their location
 
 **!status**
 Prints info on the TARDIS:
@@ -101,9 +109,6 @@ Prints info on the TARDIS:
 
 **!me**
 Enables physlock to prevent it falling through the floor if you are currently in another TARDIS, and comes to you (will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
-
-**!target (playername)**
-Targets players by name (again, will replace the relative location offset with bounding box checks in future when I get better at Expression2 scripting)
 
 **!gps**
 Targets a random wiremod GPS, travels to it, and materialises on it

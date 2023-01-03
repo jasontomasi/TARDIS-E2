@@ -1,22 +1,38 @@
-@name Holo Radar
+@name TARDIS Holomap (IntuitiveNZ)
 @inputs
 @outputs
-@persist TardisCount:number Tardises:array
+@persist TardisCount:number Tardises:array Radius:number Multiplier:number Height:number Position:vector
 
+interval(200)
 
-interval(2000)
-
+    Radius = 30
+    Multiplier = 50
+    Height = 30
 
 if (first()) {
 
-# TARDISMODEL = "models/the_sniper_9/doctorwho/tardis/tardis.mdl"
+	Position = entity():pos()
+
+    for (A = 80, 90) {
+    
+        holoCreate(A):setTrails(4,4,20,"trails/laser",vec(255,255,255),250)
+        #holoModel(A,"cone")
+        #holoMaterial(A,"models/wireframe")
+        holoScale(A,vec(-0.05,-0.05,-0.05))
+        holoColor(A,vec(255,255,255))
+    }
+
+
 
 	# Black backdrop for the other holograms
 	holoCreate(0,entity():pos() + vec(0,0,5), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
 	holoAlpha(0,200)
 
+
 timer("start", 1000)
+timer("holotardis", 2000)
+
 
 function funcFindTargets() {
 
@@ -25,25 +41,22 @@ function funcFindTargets() {
     TardisCount = Tardises:count()
     Excess = TardisCount + 1
 
-    for(A = Excess, 20) {
-        holoDelete(A)
+    for(C = Excess, 20) {
+        holoDelete(C)
     }
 
  timer("start", 8000)
 }
 
-
-}
-
-
+function funcHoloTardis() {
 
 foreach(Index,TargetTardis:entity = Tardises) {
 
 	holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
-	holoAlpha(Index, 255)
+	holoAlpha(Index, 240)
 	holoColor(Index, vec(255,255,255))
 	# Get position of target, localize the vector, place at expression chip, and scale down
-	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,10) )
+	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,5) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
 	holoAng(Index,TargetTardis:angles())
@@ -51,11 +64,11 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
 if (TargetTardis:tardisHealth() < 20) {
     holoColor(Index, vec(255,0,0))
-    holoRenderFX(Index,9)
     }
 if (TargetTardis:tardisInVortex() == 1) {
+    #holoAlpha(Index, 128)
     holoMaterial(Index, "effects/minescreen_static01_")
-    holoPos(Index, entity():pos() + vec(randint(-60,60), randint(-60,60), randint(20,40)))
+    holoPos(Index, entity():pos() + vec(randint(-40,40), randint(-40,40), randint(35,60)))
     holoAng(Index, ang(randint(0,45),randint(0,45),randint(0,45)))
     }
 if (TargetTardis:tardisMoving() == 1) {
@@ -64,10 +77,35 @@ if (TargetTardis:tardisMoving() == 1) {
     }
 }
 
+ timer("holotardis", 3000)
+
+}
+
+}
+
+
+
+for (D = 80, 90) {
+
+        holoPos(D, Position + vec(sin(curtime()*Multiplier)*Radius, cos(curtime()*Multiplier)*Radius, Height))
+
+        Radius = Radius + 10
+        Multiplier = Multiplier + 5
+        Height = Height + 10
+
+}
+
+
+
+
 
 
 
 
 if(clk("start")) {
     funcFindTargets()
+}
+
+if(clk("holotardis")) {
+    funcHoloTardis()
 }

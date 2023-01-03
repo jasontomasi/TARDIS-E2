@@ -53,7 +53,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
 
-if (TargetTardis:tardisHealth() > 20 ) {
+if (TargetTardis:tardisHealth() > 0 ) {
 
     print("TARDIS",Index,"assigned landing bay",Index)
 
@@ -106,7 +106,7 @@ if (TargetTardis:tardisHealth() > 20 ) {
 
 }
 
-elseif (TargetTardis:tardisHealth() <= 20 ) {
+elseif (TargetTardis:tardisHealth() == 0 ) {
     
 	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
  

@@ -5,7 +5,7 @@
 
 interval(200)
 
-    Radius = 30
+    Radius = 40
     Multiplier = 50
     Height = 30
 
@@ -25,10 +25,9 @@ if (first()) {
 
 
 	# Black backdrop for the other holograms
-	holoCreate(0,entity():pos() + vec(0,0,5), vec(40,40,1), ang(), vec())
+	holoCreate(0,entity():pos() + vec(0,0,1), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
 	holoAlpha(0,200)
-
 
 timer("start", 1000)
 timer("holotardis", 2000)
@@ -48,15 +47,19 @@ function funcFindTargets() {
  timer("start", 8000)
 }
 
+
 function funcHoloTardis() {
 
 foreach(Index,TargetTardis:entity = Tardises) {
+    
+    if (TargetTardis:isValid()) {
 
+ # Scale of 0.08 looks good
 	holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
-	holoAlpha(Index, 240)
+	holoAlpha(Index, 255)
 	holoColor(Index, vec(255,255,255))
-	# Get position of target, localize the vector, place at expression chip, and scale down
-	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,50)) + vec(0,0,5) )
+	# Get position of target, localize the vector, place at expression chip, and scale down vec(100,100,50)
+	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,30)) + vec(0,0,2) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
 	holoAng(Index,TargetTardis:angles())
@@ -75,6 +78,9 @@ if (TargetTardis:tardisMoving() == 1) {
     holoColor(Index, vec(255,255,0))
     holoRenderFX(Index,9)
     }
+
+    }
+    else {}
 }
 
  timer("holotardis", 3000)
@@ -109,3 +115,4 @@ if(clk("start")) {
 if(clk("holotardis")) {
     funcHoloTardis()
 }
+

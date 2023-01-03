@@ -45,6 +45,8 @@ Index = 1
     }
 
 foreach(Index,TargetTardis:entity = Tardises) {
+    
+    if (TargetTardis:isValid()) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
@@ -116,7 +118,8 @@ elseif (TargetTardis:tardisHealth() <= 20 ) {
 
 
 Index++
-
+}
+else {}
 }
 # END of foreach loop
 
@@ -136,6 +139,8 @@ findClearWhiteClassList()
 function funcClearLandingBay() {
 
     foreach(Index,TargetTardis:entity = Tardises) {
+        
+    if (TargetTardis:isValid()) {
 
 				    if(TargetTardis:tardisLongflighted()==0) {
 		          TargetTardis:tardisLongflight()
@@ -145,6 +150,8 @@ function funcClearLandingBay() {
     			}     
         
         TargetTardis:tardisFastDemat()
+}
+else {}
     }
 	
 }

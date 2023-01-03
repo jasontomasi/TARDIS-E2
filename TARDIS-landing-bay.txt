@@ -1,4 +1,4 @@
-@name SIDRAT landing bay
+@name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN
 @persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector
 
@@ -50,9 +50,8 @@ foreach(Index,TargetTardis:entity = Tardises) {
     TargetGPS = ChosenGPS:pos()
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
-    #print("Current bay vector:",TargetGPS)
 
-if (TargetTardis:tardisHealth() > 0 ) {
+if (TargetTardis:tardisHealth() > 20 ) {
 
     print("TARDIS",Index,"assigned landing bay",Index)
 
@@ -70,13 +69,13 @@ if (TargetTardis:tardisHealth() > 0 ) {
     holoCreate(Index)
     holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
     holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+10,TargetTardis:boxSize():y()+10,TargetTardis:boxSize():z()+10))
-    holoAng(Index, (entity():pos() - TargetGPS):toAngle())
+    holoAng(Index, ang(0,0,0))
     holoModel(Index, "cube")
     holoMaterial(Index, LandingBayMaterial)
     holoColor(Index, LandingBayColor,255)
     
     timer("deleteholo",16000)
-    timer("repaironarrival",20000)
+    timer("arrivalchecks",22000)
 
     if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
@@ -98,15 +97,14 @@ if (TargetTardis:tardisHealth() > 0 ) {
 		TargetTardis:tardisMaterialise()
 			}
     if(TargetTardis:tardisInVortex()==0) {
-		TargetTardis:tardisDemat(TargetGPS, (entity():pos() - TargetGPS):toAngle())
-    
+		TargetTardis:tardisDemat(TargetGPS, ang(0,0,0))
 			}
 
 }
 
 }
 
-elseif (TargetTardis:tardisHealth() == 0 ) {
+elseif (TargetTardis:tardisHealth() <= 20 ) {
     
 	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
  
@@ -142,6 +140,9 @@ function funcClearLandingBay() {
 				    if(TargetTardis:tardisLongflighted()==0) {
 		          TargetTardis:tardisLongflight()
 	        }
+        if(TargetTardis:tardisPowered()==0) {
+				        TargetTardis:tardisPower()
+    			}     
         
         TargetTardis:tardisFastDemat()
     }
@@ -211,22 +212,20 @@ if(clk("deleteholo")) {
     holoDeleteAll()
 }
 
-if(clk("repaironarrival")) {
+if(clk("arrivalchecks")) {
     foreach(Index,TargetTardis:entity = Tardises) {
     
         if (TargetTardis:tardisHealth() < 20 ) {
             TargetTardis:tardisSelfrepair()
             print("TARDIS",Index,"REPAIRING:",TargetTardis:pos())
         }
+		
+		elseif (TargetTardis:tardisHealth() >= 20 ) {
+            if(TargetTardis:tardisPowered()==1) {
+				           TargetTardis:tardisPower()
+			}
+        }
+		
     }
 }
-
-
-
-
-
-
-
-
-
 

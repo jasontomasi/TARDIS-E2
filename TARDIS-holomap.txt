@@ -6,7 +6,7 @@
 interval(200)
 
     Radius = 40
-    Multiplier = 50
+    Multiplier = 10
     Height = 30
 
 if (first()) {
@@ -15,7 +15,7 @@ if (first()) {
 
     for (A = 80, 90) {
     
-        holoCreate(A):setTrails(4,4,10,"trails/laser",vec(255,255,255),250)
+        holoCreate(A):setTrails(4,4,40,"trails/laser",vec(255,255,255),250)
         #holoModel(A,"cone")
         #holoMaterial(A,"models/wireframe")
         holoScale(A,vec(-0.05,-0.05,-0.05))
@@ -65,8 +65,23 @@ foreach(Index,TargetTardis:entity = Tardises) {
 	holoAng(Index,TargetTardis:angles())
 	holoRenderFX(Index,0)
 
+if (holoEntity(Index+20):isValid()) {
+        holoRenderFX(Index+20, 9)
+}
+
 if (TargetTardis:tardisHealth() < 20) {
     holoColor(Index, vec(255,0,0))
+    #holoRenderFX(Index, 9)
+    
+                    holoCreate(Index+20, holoEntity(Index):pos() + vec(0,0,5))
+                    holoParent(Index+20, holoEntity(Index))
+                    holoModel(Index+20, "sphere3")
+                    holoScale(Index+20, vec(1.25,1.25,1.25))
+                    holoColor(Index+20, vec(255,0,0))
+                    holoAlpha(Index+20, 200)
+                    #holoRenderFX(Index+20, 9)
+                    holoMaterial(Index+20, "effects/minescreen_static01_")
+                    holoAng(Index+20, holoEntity(Index):angles())
     }
 
 if (TargetTardis:tardisHealth() > 20) {
@@ -78,24 +93,27 @@ if (TargetTardis:tardisHealth() > 20) {
 if (TargetTardis:tardisInVortex() == 1) {
     #holoAlpha(Index, 230)
     holoMaterial(Index, "effects/minescreen_static01_")
-    holoPos(Index, entity():pos() + vec(randint(-50,50), randint(-50,50), randint(30,100)))
-    
+
         if (TargetTardis:tardisHealth() < 20) {
             # Make the angles more dramatic when damaged
             #holoAng(Index, ang(randint(-90,90),randint(-90,90),randint(-50,90)))
+            holoPos(Index, entity():pos() + vec(randint(-80,80), randint(-80,80), randint(10,100))) 
             
-                    holoCreate(Index+20, holoEntity(Index):pos() + vec(0,0,5))
-                    holoParent(Index+20, holoEntity(Index))
-                    holoModel(Index+20, "sphere3")
-                    holoScale(Index+20, vec(1.25,1.25,1.25))
-                    holoColor(Index+20, vec(255,0,0))
-                    holoAlpha(Index+20, 128)
+                    #holoCreate(Index+20, holoEntity(Index):pos() + vec(0,0,5))
+                    #holoParent(Index+20, holoEntity(Index))
+                    #holoModel(Index+20, "sphere3")
+                    #holoScale(Index+20, vec(1.25,1.25,1.25))
+                    #holoColor(Index+20, vec(255,0,0))
+                    #holoAlpha(Index+20, 128)
                     #holoRenderFX(Index+20, 9)
-                    holoAng(Index+20, holoEntity(Index):angles())
+                    #holoMaterial(Index+20, "effects/minescreen_static01_")
+                    #holoAng(Index+20, holoEntity(Index):angles())
         }
     else{
     holoAng(Index, ang(randint(-30,30),randint(-30,30),randint(-30,30)))
     }
+    
+    holoPos(Index, entity():pos() + vec(randint(-50,50), randint(-50,50), randint(30,100)))   
 }
 if (TargetTardis:tardisMoving() == 1) {
     holoColor(Index, vec(255,255,0))

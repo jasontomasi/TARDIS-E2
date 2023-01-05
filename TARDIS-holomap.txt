@@ -6,8 +6,8 @@
 interval(200)
 
     Radius = 40
-    Multiplier = 10
-    Height = 30
+    Multiplier = 20
+    Height = 35
 
 if (first()) {
 
@@ -15,7 +15,7 @@ if (first()) {
 
     for (A = 80, 90) {
     
-        holoCreate(A):setTrails(4,4,40,"trails/laser",vec(255,255,255),250)
+        holoCreate(A):setTrails(4,4,20,"trails/laser",vec(255,255,255),255)
         #holoModel(A,"cone")
         #holoMaterial(A,"models/wireframe")
         holoScale(A,vec(-0.05,-0.05,-0.05))
@@ -27,7 +27,8 @@ if (first()) {
 	# Black backdrop for the other holograms
 	holoCreate(0,entity():pos() + vec(0,0,1), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
-	holoAlpha(0,200)
+	holoAlpha(0, 250)
+ holoColor(0, vec(50,50,50))
 
 timer("start", 1000)
 timer("holotardis", 2000)
@@ -57,9 +58,10 @@ foreach(Index,TargetTardis:entity = Tardises) {
  # Scale of 0.08 looks good
 	holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
 	holoAlpha(Index, 255)
-	holoColor(Index, vec(255,255,255))
+ # Turquoise vec(0,255,230), medium blue vec(0,155,255), white vec(255,255,255)
+	holoColor(Index, vec(0,155,255))
 	# Get position of target, localize the vector, place at expression chip, and scale down vec(100,100,50)
-	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,40)) + vec(0,0,2) )
+	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,40)) + vec(0,0,5) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
 	holoAng(Index,TargetTardis:angles())
@@ -78,7 +80,7 @@ if (TargetTardis:tardisHealth() < 20) {
                     holoModel(Index+20, "sphere3")
                     holoScale(Index+20, vec(1.25,1.25,1.25))
                     holoColor(Index+20, vec(255,0,0))
-                    holoAlpha(Index+20, 200)
+                    holoAlpha(Index+20, 128)
                     #holoRenderFX(Index+20, 9)
                     holoMaterial(Index+20, "effects/minescreen_static01_")
                     holoAng(Index+20, holoEntity(Index):angles())
@@ -111,6 +113,8 @@ if (TargetTardis:tardisInVortex() == 1) {
         }
     else{
     holoAng(Index, ang(randint(-30,30),randint(-30,30),randint(-30,30)))
+    holoColor(Index, vec(255,255,255))
+    holoAlpha(Index, 128)
     }
     
     holoPos(Index, entity():pos() + vec(randint(-50,50), randint(-50,50), randint(30,100)))   
@@ -134,11 +138,10 @@ if (TargetTardis:tardisMoving() == 1) {
 
 for (D = 80, 90) {
 
-        holoPos(D, Position + vec(sin(curtime()*Multiplier)*Radius, cos(curtime()*Multiplier)*Radius, Height))
-
+        holoPos(D, entity():pos() + vec(sin(curtime()*Multiplier)*Radius, cos(curtime()*Multiplier)*Radius, Height))
         Radius = Radius + 10
-        Multiplier = Multiplier + 5
-        Height = Height + 10
+        Multiplier = Multiplier + 2
+        Height = Height + 5
 
 }
 

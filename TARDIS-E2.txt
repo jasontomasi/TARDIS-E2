@@ -1,11 +1,70 @@
 @name TARDIS Barge
 @inputs TARDIS:entity DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS
-@persist Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector
+@persist Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number
+
+#ifdef entity:plySpawn()
+	#else
+		error("This server does not have plycore installed, which this needs to work.")
+	#endif
+
 
 runOnChat(1)
 
 
+    if(!owner():isAlive() && DeathRescue == 1) {
+        owner():plySpawn()
+        print("Death detected!")
+        timer("playerdeath", 7000)
+    }
+
+
 if(first() | dupefinished()) {
+
+DeathRescue = 0
+
+function funcPlayerDeath() {
+
+	if(TARDIS:tardisHealth() == 0){
+		print("TARDIS disabled")
+    }
+	
+	else {
+	
+	if(TARDIS:tardisPowered()==0){
+		TARDIS:tardisPower()
+    }
+
+	if(TARDIS:tardisFlying()==0){
+		TARDIS:tardisFlightmode()
+    }
+
+	if(TARDIS:tardisIsHADS()==1){
+		TARDIS:tardisHADS()
+    }
+
+	if(TARDIS:tardisPhyslocked()==0){
+		TARDIS:tardisPhyslock()
+    }
+
+	if(TARDIS:tardisLongflighted()==1){
+		TARDIS:tardisLongflight()
+	}
+
+	           if(TARDIS:tardisInVortex()==1) {
+					TARDIS:tardisSetDestination(owner():pos(), ang(0,0,0))
+					TARDIS:tardisMaterialise()
+					#timer("WaitingForRemat", 1000)
+            }
+
+            else {
+                if(TARDIS:tardisInVortex()==0) {
+					TARDIS:tardisDemat(owner():pos(), ang(0,0,0))
+					#timer("WaitingForDemat", 1000)
+					}
+            }
+}
+}
+
 
 function makeItPretty(Index:number, Model:string, Where:vector, Angle:angle, Size:vector, Skin:string)
 	{
@@ -14,6 +73,7 @@ function makeItPretty(Index:number, Model:string, Where:vector, Angle:angle, Siz
     HOLONUMBER = HOLONUMBER + 1
 
 	}
+
 
 function funcBarge()
 	{
@@ -411,7 +471,24 @@ function funcComeToMe()
 
 
 
-if (->TARDIS == 1) {
+
+
+
+
+
+
+if (TARDIS:isValid()) {
+
+
+if(clk("deleteholo")) {
+    holoDeleteAll()
+	HOLONUMBER = 0
+}
+
+if(clk("playerdeath")) {
+    funcPlayerDeath()
+}
+
 
 
 if (DEMAT&~DEMAT) {
@@ -559,23 +636,33 @@ elseif(COMMAND=="!go") {
 	hideChat(1)
 	funcTargetPlayer(ARGUMENT1)
     }
+    }
+
+elseif(COMMAND=="!death") {
+	hideChat(1)
+    if(DeathRescue == 1) {
+        DeathRescue = 0
+        runOnDeath(0)
+        print("TARDIS death rescue is now OFF")
+        }
+    elseif(DeathRescue == 0) {
+        DeathRescue = 1
+        runOnDeath(1)
+        print("TARDIS death rescue is now ON")
+    }
+    }
+    
+}
+# END OF CHAT MONITOR
+
 
 }
 
-}
-
-}
-
-elseif (->TARDIS == 0) {
+elseif (TARDIS:isValid() == 0) {
 
 	print("First wire the E2 chip to TARDIS exterior")
 
 }
-
-
-
-
-# END OF CHAT MONITOR
 
 
 A += 10
@@ -591,7 +678,3 @@ holoPos(8,Position1B+vec(-cos(A)*B3,sin(A)*B3,cos(A)*B3))
 holoPos(9,Position1B+vec(cos(A)*B3,sin(A)*B3,cos(A)*B3))
 
 
-if(clk("deleteholo")) {
-    holoDeleteAll()
-	HOLONUMBER = 0
-}

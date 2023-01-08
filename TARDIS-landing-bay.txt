@@ -1,21 +1,59 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN
-@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector
+@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3
 
 runOnChat(1)
+
+interval(100)
+
 
 if(first()){
 
 # CUSTOMISE THESE OPTIONS 
+    LandingBayRange = 700
+    LandingBayMaterial = "models/props_combine/tpballglow"
+    LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
+	
+    # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
 
-    LandingBayRange = 1024
-    LandingBayMaterial = "effects/screen_monitor_blank"
-    LandingBayColor = vec(255,255,255)
+	# CENTRAL SPHERE
+    holoCreate(98)
+    holoPos(98, entity():pos() + vec(0,0,400))
+    holoMaterial(98, "matrix")
+    holoModel(98, "hq_sphere")
+    holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
+    holoScaleUnits(98, vec(190,190,190))  # 190
+    holoRenderFX(98, 0)
+
+ # PYRAMID
+    holoCreate(97)
+    holoPos(97, entity():pos() + vec(0,0,350))
+    holoMaterial(97, "matrix")
+    holoModel(97, "pyramid")
+    holoColor(97, vec(0,255,0)) # PURPLE vec(255,0,255)
+    holoScaleUnits(97, vec(200,200,200))
+    holoAng(97, ang(0,0,-180))
+
+ # CONSOLE
+    holoCreate(96)
+    holoPos(96, entity():pos())
+    holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
+
+ # TIME ROTOR
+    holoCreate(95)
+    holoColor(95, vec(212,0,255))
+    #holoMaterial(95, "models/effects/splode1_sheet")
+    holoPos(95, entity():pos() + vec(0,0,20))
+    holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
+
+
 }
+# END FIRST
 
 
 
 function funcFindSidrats() {
+    
     findByClass("gmod_tardis")
     Tardises = findToArray()
     TardisCount = findToArray():count()
@@ -24,17 +62,37 @@ function funcFindSidrats() {
 
 
 function funcFindLandingBay() {
+    #findByModel("models/beer/wiremod/gps.mdl")
     findByClass("gmod_wire_gps")
     findClipToSphere(entity():pos(),LandingBayRange)
     GPSes = findToArray()
     GPSCount = findToArray():count()
+	
+ BAYLIGHT = 0
+	
+	for (BAYLIGHT = 0, GPSCount) {
+	
+		ChosenGPS = GPSes[BAYLIGHT,entity]
+		TargetGPS = ChosenGPS:pos()
+		
+ ChosenGPS:setMaterial(LandingBayMaterial)
+ ChosenGPS:setColor(vec(255,0,0))
+ ChosenGPS:setAlpha(128)
+
+	}
+	
 }
 
 
 
-function funcRecallSidrats() {
+function funcPrimingLandingBays() {
 
-Index = 1
+
+Index = 0
+
+
+E2 = holoEntity(95):pos() + vec(0,0,50)						#Get the current position (change this if you want)
+# E2 = holoEntity(97):pos() - vec(0,0,95)						#Get the current position (change this if you want)
 
     if (GPSCount < TardisCount) {
     print("TARDISES: ", TardisCount, "GPS chips: ", GPSCount, "Please spawn", TardisCount-GPSCount, "more.")
@@ -46,65 +104,77 @@ Index = 1
 
 foreach(Index,TargetTardis:entity = Tardises) {
     
-    if (TargetTardis:isValid()) {
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
-
-if (TargetTardis:tardisHealth() > 0 ) {
-
     print("TARDIS",Index,"assigned landing bay",Index)
 
-    TardisHeight = TargetTardis:boxSize():z()
-    TardisHalfHeight = TardisHeight / 2
 
-# CHECK IF TARDIS ALREADY THERE (in future, whether any are there via 'findInSphere')
+# CHECK IF TARDIS ALREADY OCCUPYING BAY
 
+LandingBayClearance = rangerOffsetHull(TargetTardis:boxSize():z(), ChosenGPS:toWorld(vec(0,0,100)), ChosenGPS:up(), TargetTardis:boxSize())
 
+if(LandingBayClearance:hit() && LandingBayClearance:entity():type() == "gmod_tardis") {
+    
+    print("TARDIS already occupying landing bay",Index)
+    }
+    
+####################
 
-    if (TargetTardis:pos() != TargetGPS) {
 
 # HOLOGRAMS
 
-    holoCreate(Index)
-    holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
-    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+10,TargetTardis:boxSize():y()+10,TargetTardis:boxSize():z()+10))
-    holoAng(Index, ang(0,0,0))
-    holoModel(Index, "cube")
-    holoMaterial(Index, LandingBayMaterial)
-    holoColor(Index, LandingBayColor,255)
-    
-    timer("deleteholo",16000)
-    timer("arrivalchecks",22000)
 
-    if(TargetTardis:tardisPowered()==0) {
-		TargetTardis:tardisPower()
-            }
-    if(TargetTardis:tardisPhyslocked()==0) {
-		TargetTardis:tardisPhyslock()
-            }
-    if(TargetTardis:tardisLongflighted()==1) {
-		TargetTardis:tardisLongflight()
-	        }
-    if(TargetTardis:tardisLocked()==0) {
-		TargetTardis:tardisLock()
-	        }
-    if(TargetTardis:tardisVisible()==0) {
-		TargetTardis:tardisPhase()
-	        }
-    if(TargetTardis:tardisInVortex()==1) {
-		TargetTardis:tardisSetDestination(TargetGPS, ang(0,0,0))
-		TargetTardis:tardisMaterialise()
-			}
-    if(TargetTardis:tardisInVortex()==0) {
-		TargetTardis:tardisDemat(TargetGPS, ang(0,0,0))
-			}
+# DRAW LINES BETWEEN E2 AND LANDING BAYS
+
+LandingBayDifference = ChosenGPS:pos() - E2						#Subtract them to make a direction
+LandingBayDistance = LandingBayDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
+LandingBayHoloAngle = LandingBayDifference:toAngle() + ang(90,0,0)
+
+CircleDifference = holoEntity(98):pos() - E2						#Subtract them to make a direction
+CircleDistance = CircleDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
+CircleHoloAngle = CircleDifference:toAngle() + ang(90,0,0)
+
+holoCreate(Index+40)
+holoModel(Index+40, "cylinder")
+holoPos(Index+40, (ChosenGPS:pos() + E2) / 2)
+holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
+holoScale(Index+40, vec(3,3,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
+holoMaterial(Index+40, "models/alyx/emptool_glow")
+holoColor(Index+40, vec(0,213,255), 255)
+
+
+
+holoCreate(93)
+holoModel(93, "cylinder")
+holoPos(93, (holoEntity(98):pos() + E2) / 2)
+holoAng(93, CircleHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
+holoScale(93, vec(3,3,CircleDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
+holoMaterial(93, "models/alyx/emptool_glow")
+holoColor(93, vec(0,213,255), 255)
+
+
+if (TargetTardis:tardisHealth() > 0 & TargetTardis:tardisHealth() < 20) {
+
+#holoRenderFX(Index+40, 13)
+#holoColor(Index+40, vec(255,0,0), 128)
+
+    # If any TARDIS is sick, create a red console holo. Each sick TARDIS will overwrite the index number.
+		#holoCreate(79, TargetGPS)
+  #holoCreate(78, TargetGPS + vec(0,0,40))
+#  holoCreate(Index+70, TargetGPS + vec(0,0,60))
 
 }
 
-}
+
+
+
+
+
+
 
 elseif (TargetTardis:tardisHealth() == 0 ) {
     
@@ -124,15 +194,78 @@ else {}
 # END of foreach loop
 
 
+}
 
 
-findClearBlackList()
-findClearBlackClassList()
 
-findClearWhiteList()
-findClearWhiteClassList()
+function funcRecallSidrats() {
+
+Index = 0
+
+foreach(Index,TargetTardis:entity = Tardises) {
+
+    TardisHeight = TargetTardis:boxSize():z()
+    TardisHalfHeight = TardisHeight / 2
+
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0) {
+
+    ChosenGPS = GPSes[Index,entity]
+    TargetGPS = ChosenGPS:pos()
+    GPSBoxTop = ChosenGPS:aabbMax():z()
+
+
+    holoCreate(Index)
+    holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
+    holoAng(Index, ChosenGPS:angles())
+    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+20,TargetTardis:boxSize():y()+20,TargetTardis:boxSize():z()+5))
+    holoModel(Index, "cylinder")
+    holoMaterial(Index, LandingBayMaterial)
+    holoColor(Index, LandingBayColor,255)
+    
+    
+    if ((TargetTardis:tardisHealth() > 0) & (TargetTardis:tardisHealth() < 20)) {
+        holoMaterial(Index, "models/effects/splodearc_sheet")
+        #holoColor(Index, vec(255,0,0))
+        holoRenderFX(Index, 10)
+    }
+    
+    timer("deleteholo",18000)
+    timer("arrivalchecks",22000)
+
+    if(TargetTardis:tardisPowered()==0) {
+		TargetTardis:tardisPower()
+            }
+    if(TargetTardis:tardisPhyslocked()==0) {
+		TargetTardis:tardisPhyslock()
+            }
+    if(TargetTardis:tardisLongflighted()==1) {
+		TargetTardis:tardisLongflight()
+	        }
+    if(TargetTardis:tardisLocked()==0) {
+		TargetTardis:tardisLock()
+	        }
+    if(TargetTardis:tardisVisible()==0) {
+		TargetTardis:tardisPhase()
+	        }
+    if(TargetTardis:tardisInVortex()==1) {
+		TargetTardis:tardisSetDestination(TargetGPS, ChosenGPS:angles())
+		TargetTardis:tardisMaterialise()
+			}
+    if(TargetTardis:tardisInVortex()==0) {
+		TargetTardis:tardisDemat(TargetGPS, ChosenGPS:angles())
+			}
+
+	}
+	
+
+	
+}
+
+
+
 
 }
+# END FUNC
 
 
 
@@ -142,13 +275,16 @@ function funcClearLandingBay() {
         
     if (TargetTardis:isValid()) {
 
-				    if(TargetTardis:tardisLongflighted()==0) {
+        if(TargetTardis:tardisPowered() == 0) {
+				        TargetTardis:tardisPower()
+    			}  
+        if(TargetTardis:tardisPhyslocked() ==1 ) {
+		          TargetTardis:tardisPhyslock()
+            }
+        if(TargetTardis:tardisLongflighted() == 0) {
 		          TargetTardis:tardisLongflight()
 	        }
-        if(TargetTardis:tardisPowered()==0) {
-				        TargetTardis:tardisPower()
-    			}     
-        
+
         TargetTardis:tardisFastDemat()
 }
 else {}
@@ -202,27 +338,79 @@ if (RETURN&~RETURN) {
 # BEGIN TIMER SECTION
 
 if(clk("TimerOne")) {
+    holoMaterial(98, "models/props_combine/masterinterface01c")
+    #holoColor(98, vec(255,70,0))  # ORANGE
+    #holoRenderFX(98, 15)
+    
+    holoColor(95, vec(255,0,0))
+    holoMaterial(95, "models/props_combine/cit_beacon")
+    
+    #holoRenderFX(95, 9)
+        
+    #holoRenderFX(98, 10)
+    #holoColor(98, vec(255,255,255))
+    
+    # WHEEL
+    #holoCreate(96)
+    #holoPos(96, holoEntity(98):pos())
+    #holoMaterial(96, "models/props_combine/tpballglow")
+    #holoModel(96, "models/maxofs2d/hover_rings.mdl")
+    #holoColor(96, vec(255,0,0)) # PURPLE vec(255,0,255)
+    #holoScaleUnits(96, vec(380,380,380))
+    #holoAng(96, ang(0,0,-180))
+    #holoParent(96, holoEntity(98))
+
     funcFindSidrats()
-    timer("TimerTwo",1000)
+    timer("TimerTwo",2000)
 }
 
 if(clk("TimerTwo")) {
     funcFindLandingBay()
-    timer("TimerThree",1000)
+    timer("TimerThree",2000)
 }
 
 if(clk("TimerThree")) {
+    funcPrimingLandingBays()
+	timer("TimerFour",7000)
+}
+
+if(clk("TimerFour")) {
     funcRecallSidrats()
 }
 
+
+
+
+
+
 if(clk("deleteholo")) {
-    holoDeleteAll()
+    for (I = 0, 50) {
+        holoDelete(I)
+    }
+    #holoDelete(96)
+	   holoDelete(78)
+    holoDelete(79)
+    holoDelete(93)
+    holoMaterial(98, "matrix")
+    
+    holoMaterial(95, "")
+    holoRenderFX(95, 0)
+    holoColor(95, vec(255,255,255))
+        
+    holoColor(98, vec(255,0,255))
+    holoRenderFX(98, 0)
+    holoRenderFX(97, 0)
+    #holoDeleteAll()
 }
 
 if(clk("arrivalchecks")) {
     foreach(Index,TargetTardis:entity = Tardises) {
     
         if (TargetTardis:tardisHealth() < 20 ) {
+            
+            if(TargetTardis:tardisPhyslocked()==0) {
+		              TargetTardis:tardisPhyslock()
+            }
             TargetTardis:tardisSelfrepair()
             print("TARDIS",Index,"REPAIRING:",TargetTardis:pos())
         }
@@ -235,4 +423,3 @@ if(clk("arrivalchecks")) {
 		
     }
 }
-

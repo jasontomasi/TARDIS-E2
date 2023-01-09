@@ -1,42 +1,62 @@
 @name SIDRAT landing bay (IntuitiveNZ)
-@inputs RECALL RETURN
-@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1
+@inputs RECALL RETURN FINDBAYS
+@persist Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1 Nearby:vector
 
 runOnChat(1)
 interval(200)
 
 
-    #T = T + 0.1 * 2.25
-    Timer += 40
-    Cring = 0.05 + (sin(Timer+50) * 13)
     Cur = curtime()
 
 
 if (SEQ1 == 1) {
+    
+    #T = T + 0.1 * 2.25
+    Timer += 40
+    Cring = 0.05 + (sin(Timer+50) * 13)
+    
+        # TIME ROTOR ASC/DESC WHEN ACTIVE
         holoPos(95, entity():pos() + vec(0,0,5) - vec(0,0,Cring))
+        #holoAng(95, entity():angles())
 }
 if (SEQ1 == 0) {
         holoPos(95, entity():pos() + vec(0,0,-10))
+        #holoAng(95, entity():angles())
 }
 
 
-    
 if(first()){
+
+# TURN UP THE WIREMOD LIMITS SO THE E2 WON'T GET SHUT DOWN
+
+concmd("sv_cheats 1")
+concmd("wire_holograms_modelany 1")
+concmd("wire_holograms_spawn_amount 30")
+concmd("wire_holograms_burst_amount 30")
+concmd("wire_holograms_burst_delay 0")
+concmd("wire_holograms_max 128")
+concmd("wire_holograms_size_max 2048")
+concmd("wire_expression2_print_max 1000")
+concmd("wire_expression2_unlimited 1")
+concmd("wire_expression2_quotatick 500000")
+concmd("wire_expression2_quotasoft 500000")
 
 # CUSTOMISE THESE OPTIONS 
     LandingBayRange = 950
     LandingBayMaterial = "models/props_combine/tpballglow"
     LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
 	
+    # propSpawn("models/maxofs2d/hover_rings.mdl", entity():pos() + vec(0,0,120), ang(0,0,0), 1)
     # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
 
     soundPlay(1, 10, "ambient/levels/labs/teleport_mechanism_windup3.wav")
 
     SEQ1 = 0
+    E2 = entity():pos() + vec(0,0,60)
 
 	# CENTRAL SPHERE
     holoCreate(98)
-    holoPos(98, entity():pos() + vec(0,0,400))
+    holoPos(98, entity():pos() + vec(0,0,450))
     holoMaterial(98, "matrix")
     holoModel(98, "hq_sphere")
     holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
@@ -45,7 +65,7 @@ if(first()){
 
  # PYRAMID
     holoCreate(97)
-    holoPos(97, entity():pos() + vec(0,0,330))
+    holoPos(97, entity():pos() + vec(0,0,380))
     holoMaterial(97, "matrix")
     holoModel(97, "pyramid")
     holoColor(97, vec(70,255,0)) # PURPLE vec(255,0,255)
@@ -57,6 +77,7 @@ if(first()){
     holoCreate(96)
     holoPos(96, entity():pos() + vec(0,0,5))
     holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
+    holoAng(96, entity():angles())
 
  # TIME ROTOR
     holoCreate(95)
@@ -64,14 +85,15 @@ if(first()){
     holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
     holoMaterial(95, "models/alyx/emptool_glow")
     holoColor(95, vec(255,255,255))  #(109,109,109))
+    holoAng(95, entity():angles())
 
 
 }
 # END FIRST
 
 
-
-holoAng(97, ang(0, Cur * 30, -180))
+ # PYRAMID ROTATES CONTINUOUSLY
+holoAng(97, ang(0, Cur * 8, -180))
 
 
 
@@ -89,6 +111,7 @@ function funcFindLandingBay() {
     #findByModel("models/beer/wiremod/gps.mdl")
     findByClass("gmod_wire_gps")
     findClipToSphere(entity():pos(),LandingBayRange)
+    findSortByDistance(entity():pos())
     GPSes = findToArray()
     GPSCount = findToArray():count()
 	
@@ -116,10 +139,11 @@ function funcPrimingLandingBays() {
 Index = 0
 
 
-E2 = holoEntity(95):pos() + vec(0,0,50)						#Get the current position (change this if you want)
+# E2 = entity():pos() + vec(0,0,50)						#Get the current position (change this if you want)
 
     if (GPSCount < TardisCount) {
     print("TARDISES: ", TardisCount, "GPS chips: ", GPSCount, "Please spawn", TardisCount-GPSCount, "more.")
+    reset()
     }
     
     if (GPSCount >= TardisCount & (TardisCount > 0)) {
@@ -187,7 +211,14 @@ if (TargetTardis:tardisHealth() > 0 & TargetTardis:tardisHealth() < 20) {
 
 
 
-elseif (TargetTardis:tardisHealth() == 0 ) {
+
+
+
+Index++
+}
+
+
+if (TargetTardis:tardisHealth() == 0 ) {
     
 	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
  
@@ -198,8 +229,6 @@ elseif (TargetTardis:tardisHealth() == 0 ) {
 }
 
 
-Index++
-}
 else {Index++}
 }
 # END of foreach loop
@@ -343,6 +372,9 @@ if (RETURN&~RETURN) {
 	funcClearLandingBay()
 }
 
+if (FINDBAYS&~FINDBAYS) {
+	funcFindLandingBay()
+}
 
 
 
@@ -369,7 +401,7 @@ if(clk("TimerOne")) {
     holoMaterial(95, "models/alyx/emptool_glow")
     
     
-    E2 = holoEntity(95):pos() + vec(0,0,50)
+    # E2 = entity():pos() + vec(0,0,50)
     CircleDifference = holoEntity(98):pos() - E2						#Subtract them to make a direction
     CircleDistance = CircleDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
     CircleHoloAngle = CircleDifference:toAngle() + ang(90,0,0)
@@ -399,7 +431,7 @@ if(clk("TimerOne")) {
     #holoParent(96, holoEntity(98))
 
     funcFindSidrats()
-    timer("TimerTwo",2000)
+    timer("TimerTwo",000)
 }
 
 if(clk("TimerTwo")) {
@@ -409,7 +441,7 @@ if(clk("TimerTwo")) {
 
 if(clk("TimerThree")) {
     funcPrimingLandingBays()
-	timer("TimerFour",7000)
+	timer("TimerFour",8000)
 }
 
 if(clk("TimerFour")) {
@@ -449,7 +481,17 @@ if(clk("deleteholo")) {
 }
 
 if(clk("arrivalchecks")) {
+    
+    Index = 0
+    
     foreach(Index,TargetTardis:entity = Tardises) {
+
+    ChosenGPS = GPSes[Index,entity]
+    TargetGPS = ChosenGPS:pos()
+
+    CheckArrived = inrange(TargetTardis:pos(), TargetGPS + vec(-60,-60,-60), TargetGPS + vec(60,60,60))
+    
+    if(CheckArrived == 1) {
     
         if (TargetTardis:tardisHealth() < 20 ) {
             
@@ -465,8 +507,14 @@ if(clk("arrivalchecks")) {
 				           TargetTardis:tardisPower()
 			}
         }
-		
+           
     }
+    
+    elseif(CheckArrived == 0) {}
+
+    }
+    # END FOREACH
+    
 }
 
 

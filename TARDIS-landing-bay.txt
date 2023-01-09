@@ -1,20 +1,38 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN
-@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3
+@persist Tardises:array GPSes:array LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1
 
 runOnChat(1)
+interval(200)
 
-interval(100)
+
+    #T = T + 0.1 * 2.25
+    Timer += 40
+    Cring = 0.05 + (sin(Timer+50) * 13)
+    Cur = curtime()
 
 
+if (SEQ1 == 1) {
+        holoPos(95, entity():pos() + vec(0,0,5) - vec(0,0,Cring))
+}
+if (SEQ1 == 0) {
+        holoPos(95, entity():pos() + vec(0,0,-10))
+}
+
+
+    
 if(first()){
 
 # CUSTOMISE THESE OPTIONS 
-    LandingBayRange = 700
+    LandingBayRange = 950
     LandingBayMaterial = "models/props_combine/tpballglow"
     LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
 	
     # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
+
+    soundPlay(1, 10, "ambient/levels/labs/teleport_mechanism_windup3.wav")
+
+    SEQ1 = 0
 
 	# CENTRAL SPHERE
     holoCreate(98)
@@ -27,24 +45,25 @@ if(first()){
 
  # PYRAMID
     holoCreate(97)
-    holoPos(97, entity():pos() + vec(0,0,350))
+    holoPos(97, entity():pos() + vec(0,0,330))
     holoMaterial(97, "matrix")
     holoModel(97, "pyramid")
-    holoColor(97, vec(0,255,0)) # PURPLE vec(255,0,255)
+    holoColor(97, vec(70,255,0)) # PURPLE vec(255,0,255)
     holoScaleUnits(97, vec(200,200,200))
     holoAng(97, ang(0,0,-180))
+    #holoAlpha(97, 200)
 
  # CONSOLE
     holoCreate(96)
-    holoPos(96, entity():pos())
+    holoPos(96, entity():pos() + vec(0,0,5))
     holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
 
  # TIME ROTOR
     holoCreate(95)
-    holoColor(95, vec(212,0,255))
-    #holoMaterial(95, "models/effects/splode1_sheet")
-    holoPos(95, entity():pos() + vec(0,0,20))
+    holoPos(95, entity():pos() + vec(0,0,-10)) # 20 above
     holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
+    holoMaterial(95, "models/alyx/emptool_glow")
+    holoColor(95, vec(255,255,255))  #(109,109,109))
 
 
 }
@@ -52,9 +71,14 @@ if(first()){
 
 
 
+holoAng(97, ang(0, Cur * 30, -180))
+
+
+
 function funcFindSidrats() {
     
     findByClass("gmod_tardis")
+    findSortByDistance(entity():pos())
     Tardises = findToArray()
     TardisCount = findToArray():count()
 }
@@ -75,9 +99,10 @@ function funcFindLandingBay() {
 		ChosenGPS = GPSes[BAYLIGHT,entity]
 		TargetGPS = ChosenGPS:pos()
 		
+ ChosenGPS:propFreeze(1)
  ChosenGPS:setMaterial(LandingBayMaterial)
  ChosenGPS:setColor(vec(255,0,0))
- ChosenGPS:setAlpha(128)
+ ChosenGPS:setAlpha(255)
 
 	}
 	
@@ -92,7 +117,6 @@ Index = 0
 
 
 E2 = holoEntity(95):pos() + vec(0,0,50)						#Get the current position (change this if you want)
-# E2 = holoEntity(97):pos() - vec(0,0,95)						#Get the current position (change this if you want)
 
     if (GPSCount < TardisCount) {
     print("TARDISES: ", TardisCount, "GPS chips: ", GPSCount, "Please spawn", TardisCount-GPSCount, "more.")
@@ -104,7 +128,7 @@ E2 = holoEntity(95):pos() + vec(0,0,50)						#Get the current position (change t
 
 foreach(Index,TargetTardis:entity = Tardises) {
     
-    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0) {
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0 & TargetTardis:tardisSelfrepairing() == 0) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
@@ -134,9 +158,6 @@ LandingBayDifference = ChosenGPS:pos() - E2						#Subtract them to make a direct
 LandingBayDistance = LandingBayDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
 LandingBayHoloAngle = LandingBayDifference:toAngle() + ang(90,0,0)
 
-CircleDifference = holoEntity(98):pos() - E2						#Subtract them to make a direction
-CircleDistance = CircleDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
-CircleHoloAngle = CircleDifference:toAngle() + ang(90,0,0)
 
 holoCreate(Index+40)
 holoModel(Index+40, "cylinder")
@@ -145,16 +166,6 @@ holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because i
 holoScale(Index+40, vec(3,3,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
 holoMaterial(Index+40, "models/alyx/emptool_glow")
 holoColor(Index+40, vec(0,213,255), 255)
-
-
-
-holoCreate(93)
-holoModel(93, "cylinder")
-holoPos(93, (holoEntity(98):pos() + E2) / 2)
-holoAng(93, CircleHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
-holoScale(93, vec(3,3,CircleDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
-holoMaterial(93, "models/alyx/emptool_glow")
-holoColor(93, vec(0,213,255), 255)
 
 
 if (TargetTardis:tardisHealth() > 0 & TargetTardis:tardisHealth() < 20) {
@@ -189,7 +200,7 @@ elseif (TargetTardis:tardisHealth() == 0 ) {
 
 Index++
 }
-else {}
+else {Index++}
 }
 # END of foreach loop
 
@@ -207,7 +218,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
     TardisHeight = TargetTardis:boxSize():z()
     TardisHalfHeight = TardisHeight / 2
 
-    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0) {
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0 & TargetTardis:tardisSelfrepairing() == 0) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
@@ -228,9 +239,6 @@ foreach(Index,TargetTardis:entity = Tardises) {
         #holoColor(Index, vec(255,0,0))
         holoRenderFX(Index, 10)
     }
-    
-    timer("deleteholo",18000)
-    timer("arrivalchecks",22000)
 
     if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
@@ -255,13 +263,19 @@ foreach(Index,TargetTardis:entity = Tardises) {
 		TargetTardis:tardisDemat(TargetGPS, ChosenGPS:angles())
 			}
 
+    timer("deleteholo",18000)
+    timer("arrivalchecks",22000)
+
 	}
-	
 
-	
+
+    # FOR FUTURE USE - this will be useful combined with doing a findInSphere to check if a landing bay has a TARDIS already on it
+#if (TargetTardis:tardisSelfrepairing() == 1) {  
+#   Index++
+#    }
+
+
 }
-
-
 
 
 }
@@ -338,12 +352,36 @@ if (RETURN&~RETURN) {
 # BEGIN TIMER SECTION
 
 if(clk("TimerOne")) {
+
+    SEQ1 = 1
+    
+    soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 10)
+
     holoMaterial(98, "models/props_combine/masterinterface01c")
-    #holoColor(98, vec(255,70,0))  # ORANGE
+    holoColor(98, vec(255,70,255))  # ORANGE
     #holoRenderFX(98, 15)
     
+    holoMaterial(97, "models/props_combine/masterinterface01c")
+    holoColor(97, vec(255,255,255))  # ORANGE
+    holoRenderFX(97, 0)
+    
     holoColor(95, vec(255,0,0))
-    holoMaterial(95, "models/props_combine/cit_beacon")
+    holoMaterial(95, "models/alyx/emptool_glow")
+    
+    
+    E2 = holoEntity(95):pos() + vec(0,0,50)
+    CircleDifference = holoEntity(98):pos() - E2						#Subtract them to make a direction
+    CircleDistance = CircleDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
+    CircleHoloAngle = CircleDifference:toAngle() + ang(90,0,0)
+    
+    # DRAW LINE FROM TIME ROTOR TO COMPUTER
+    holoCreate(93)
+    holoModel(93, "cylinder")
+    holoPos(93, (holoEntity(98):pos() + E2) / 2)
+    holoAng(93, CircleHoloAngle)
+    holoScale(93, vec(3,3,CircleDistance) / 12)
+    holoMaterial(93, "models/alyx/emptool_glow")
+    holoColor(93, vec(0,213,255), 255)
     
     #holoRenderFX(95, 9)
         
@@ -384,23 +422,30 @@ if(clk("TimerFour")) {
 
 
 if(clk("deleteholo")) {
-    for (I = 0, 50) {
+    
+    for (I = 0, 60) {
         holoDelete(I)
     }
     #holoDelete(96)
 	   holoDelete(78)
     holoDelete(79)
     holoDelete(93)
-    holoMaterial(98, "matrix")
+    #holoMaterial(98, "matrix")
     
-    holoMaterial(95, "")
+    #holoMaterial(95, "Models/effects/comball_tape")
+    holoColor(95, vec(109,109,109))
     holoRenderFX(95, 0)
-    holoColor(95, vec(255,255,255))
         
+    holoMaterial(97, "matrix")
+    holoColor(97, vec(70,255,0)) # PURPLE vec(255,0,255)
+    holoRenderFX(97, 0)
+    
+    holoMaterial(98, "matrix")
     holoColor(98, vec(255,0,255))
     holoRenderFX(98, 0)
-    holoRenderFX(97, 0)
     #holoDeleteAll()
+    SEQ1 = 0
+    
 }
 
 if(clk("arrivalchecks")) {
@@ -423,3 +468,5 @@ if(clk("arrivalchecks")) {
 		
     }
 }
+
+

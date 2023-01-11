@@ -10,7 +10,6 @@ interval(200)
 
 
 if (SEQ1 == 1) {
-    
     #T = T + 0.1 * 2.25
     Timer += 40
     Cring = 0.05 + (sin(Timer+50) * 13)
@@ -84,9 +83,14 @@ concmd("wire_expression2_quotasoft 500000")
     holoPos(95, entity():pos() + vec(0,0,-10)) # 20 above
     holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
     holoMaterial(95, "models/alyx/emptool_glow")
-    holoColor(95, vec(255,255,255))  #(109,109,109))
+    holoColor(95, 20000 * vec(51,153,255))  #(109,109,109))
     holoAng(95, entity():angles())
 
+ # TIME ROTOR ILLUMINATION
+    lightCreate(1)
+    lightColor(1, 20000 * vec(255,50,0))
+    lightParent(1, entity())
+    lightDistance(1, 50000)
 
 }
 # END FIRST
@@ -141,8 +145,13 @@ Index = 0
 
 # E2 = entity():pos() + vec(0,0,50)						#Get the current position (change this if you want)
 
-    if (GPSCount < TardisCount) {
+    if (GPSCount < TardisCount | GPSCount == 0) {
     print("TARDISES: ", TardisCount, "GPS chips: ", GPSCount, "Please spawn", TardisCount-GPSCount, "more.")
+    reset()
+    }
+    
+    if (TardisCount == 0) {
+    print("Can't locate any TARDISes. GPS chips: ", GPSCount)
     reset()
     }
     
@@ -158,17 +167,17 @@ foreach(Index,TargetTardis:entity = Tardises) {
     TargetGPS = ChosenGPS:pos()
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
-    print("TARDIS",Index,"assigned landing bay",Index)
+    # print("TARDIS",Index,"assigned landing bay",Index)
 
 
 # CHECK IF TARDIS ALREADY OCCUPYING BAY
 
 LandingBayClearance = rangerOffsetHull(TargetTardis:boxSize():z(), ChosenGPS:toWorld(vec(0,0,100)), ChosenGPS:up(), TargetTardis:boxSize())
 
-if(LandingBayClearance:hit() && LandingBayClearance:entity():type() == "gmod_tardis") {
+#if(LandingBayClearance:hit() && LandingBayClearance:entity():type() == "gmod_tardis") {
     
-    print("TARDIS already occupying landing bay",Index)
-    }
+    #print("TARDIS already occupying landing bay",Index)
+    #}
     
 ####################
 
@@ -191,6 +200,12 @@ holoScale(Index+40, vec(3,3,LandingBayDistance) / 12)					#Scale it to make it a
 holoMaterial(Index+40, "models/alyx/emptool_glow")
 holoColor(Index+40, vec(0,213,255), 255)
 
+
+lightCreate(Index+10)
+lightColor(Index+10, 20000 * vec(255,255,255))
+lightPos(Index+10, ChosenGPS:pos())
+lightParent(Index+10, ChosenGPS)
+lightDistance(Index+10, 5000)
 
 if (TargetTardis:tardisHealth() > 0 & TargetTardis:tardisHealth() < 20) {
 
@@ -321,7 +336,7 @@ function funcClearLandingBay() {
         if(TargetTardis:tardisPowered() == 0) {
 				        TargetTardis:tardisPower()
     			}  
-        if(TargetTardis:tardisPhyslocked() ==1 ) {
+        if(TargetTardis:tardisPhyslocked() == 1 ) {
 		          TargetTardis:tardisPhyslock()
             }
         if(TargetTardis:tardisLongflighted() == 0) {
@@ -386,8 +401,8 @@ if (FINDBAYS&~FINDBAYS) {
 if(clk("TimerOne")) {
 
     SEQ1 = 1
-    
-    soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 10)
+    lightDistance(1, 50000)
+    soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 7)
 
     holoMaterial(98, "models/props_combine/masterinterface01c")
     holoColor(98, vec(255,70,255))  # ORANGE
@@ -431,17 +446,17 @@ if(clk("TimerOne")) {
     #holoParent(96, holoEntity(98))
 
     funcFindSidrats()
-    timer("TimerTwo",000)
+    timer("TimerTwo", 4000)
 }
 
 if(clk("TimerTwo")) {
     funcFindLandingBay()
-    timer("TimerThree",2000)
+    timer("TimerThree", 2000)
 }
 
 if(clk("TimerThree")) {
     funcPrimingLandingBays()
-	timer("TimerFour",8000)
+	timer("TimerFour", 6000)
 }
 
 if(clk("TimerFour")) {
@@ -454,7 +469,11 @@ if(clk("TimerFour")) {
 
 
 if(clk("deleteholo")) {
-    
+
+    for (I = 10, 40) {
+        lightRemove(I)
+    }
+
     for (I = 0, 60) {
         holoDelete(I)
     }
@@ -465,7 +484,7 @@ if(clk("deleteholo")) {
     #holoMaterial(98, "matrix")
     
     #holoMaterial(95, "Models/effects/comball_tape")
-    holoColor(95, vec(109,109,109))
+    holoColor(95, 20000 * vec(51,153,255))
     holoRenderFX(95, 0)
         
     holoMaterial(97, "matrix")

@@ -517,8 +517,10 @@ if(clk("arrivalchecks")) {
             if(TargetTardis:tardisPhyslocked()==0) {
 		              TargetTardis:tardisPhyslock()
             }
-            TargetTardis:tardisSelfrepair()
-            print("TARDIS",Index,"REPAIRING:",TargetTardis:pos())
+            if(TargetTardis:tardisSelfrepairing() == 0) {
+                TargetTardis:tardisSelfrepair()
+                print("TARDIS",Index,"REPAIRING:",TargetTardis:pos())
+            }
         }
 		
 		elseif (TargetTardis:tardisHealth() >= 20 ) {

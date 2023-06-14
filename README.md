@@ -1,7 +1,6 @@
 This repo contains multiple Garry's Mod (GMOD) Wiremod E2 for Dr Matt's TARDIS addon
 
 
-
 # TARDIS-holomap
 This E2 shows a hologram of all TARDISes on the map, and colour codes them according to various factors.
 
@@ -26,18 +25,18 @@ This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other T
 
 
 ### Instructions:
-- Manually spawn enough wiremod GPS entities near the E2 chip (one for each TARDIS on the map)
+- Manually spawn enough wiremod GPS entities near the E2 chip (one GPS for each TARDIS on the map)
 - Issue commands to the E2 by using chat
 **OR**
-- Issue commands by the wire inputs (wire buttons directly to the chip)
+- Issue commands by wiring a button/level/console/(whatever) to the wire inputs on the E2 chip
 
 
 ### Chat commands:
 
-**!recall (RECALL button)**
+**!recall**
 Find all TARDISes in the map, (forecefully) ready them for travel, and send them to the landing bays. If any TARDISes are at <= 20% health, the E2 will start self-repair on them.
 
-**!clear (RETURN button)**
+**!clear**
 Sends all previously recalled TARDISes into the vortex, in long flight mode, without a destination
 
 ---
@@ -57,7 +56,7 @@ This E2 allows you to control the functions of one TARDIS (your main TARDIS)
 **NOTE: most of these commands will first check whether the TARDIS power is on, then turn it on**
 
 **!barge**
-Find all TARDISes in the map, choose one at random, and dematerialise inside it
+Find all TARDISes in the map, target one of them at random, and materialise inside it
 
 **!esc**
 Closes the front door, turns on vortex mode, and uses fast dematerialisation to escape into the time vortex

@@ -5,21 +5,22 @@
 runOnChat(1)
 interval(200)
 
-
     Cur = curtime()
-
 
 if (SEQ1 == 1) {
     #T = T + 0.1 * 2.25
     Timer += 40
     Cring = 0.05 + (sin(Timer+50) * 13)
-    
+
         # TIME ROTOR ASC/DESC WHEN ACTIVE
-        holoPos(95, entity():pos() + vec(0,0,5) - vec(0,0,Cring))
+        holoPos(95, entity():pos() + vec(0,0,2) - vec(0,0,Cring))
+        holoAng(97, ang(0, Cur * 90, -180))
         #holoAng(95, entity():angles())
 }
+
 if (SEQ1 == 0) {
-        holoPos(95, entity():pos() + vec(0,0,-10))
+        holoPos(95, entity():pos() + vec(0,0,-12))
+        holoAng(97, ang(0, Cur * 5, -180))
         #holoAng(95, entity():angles())
 }
 
@@ -51,31 +52,33 @@ concmd("wire_expression2_quotasoft 500000")
     soundPlay(1, 10, "ambient/levels/labs/teleport_mechanism_windup3.wav")
 
     SEQ1 = 0
-    E2 = entity():pos() + vec(0,0,60)
+    E2 = entity():pos() + vec(0,0,3)  #originally 45
 
 	# CENTRAL SPHERE
     holoCreate(98)
     holoPos(98, entity():pos() + vec(0,0,450))
-    holoMaterial(98, "matrix")
+    holoMaterial(98, "models/props_combine/masterinterface01c")
     holoModel(98, "hq_sphere")
-    holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
+    #holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
+    holoColor(98, vec(0,0,0))
     holoScaleUnits(98, vec(190,190,190))  # 190
     holoRenderFX(98, 0)
 
  # PYRAMID
     holoCreate(97)
     holoPos(97, entity():pos() + vec(0,0,380))
-    holoMaterial(97, "matrix")
+    holoMaterial(97, "models/props_combine/masterinterface01c")
     holoModel(97, "pyramid")
-    holoColor(97, vec(70,255,0)) # PURPLE vec(255,0,255)
+    holoColor(97, vec(255,255,255)) # PURPLE vec(255,0,255)
     holoScaleUnits(97, vec(200,200,200))
     holoAng(97, ang(0,0,-180))
     #holoAlpha(97, 200)
 
  # CONSOLE
     holoCreate(96)
-    holoPos(96, entity():pos() + vec(0,0,5))
-    holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
+    holoPos(96, entity():pos() + vec(0,0,-5))
+    #holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
+    holoModel(96, "models/doctormemes/keltyj/console.mdl")
     holoAng(96, entity():angles())
 
  # TIME ROTOR
@@ -83,26 +86,26 @@ concmd("wire_expression2_quotasoft 500000")
     holoPos(95, entity():pos() + vec(0,0,-10)) # 20 above
     holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
     holoMaterial(95, "models/alyx/emptool_glow")
-    holoColor(95, 20000 * vec(51,153,255))  #(109,109,109))
+    holoColor(95, vec(51,153,255))  #(109,109,109))
     holoAng(95, entity():angles())
 
  # TIME ROTOR ILLUMINATION
-    lightCreate(1)
-    lightColor(1, 20000 * vec(255,50,0))
-    lightParent(1, entity())
-    lightDistance(1, 50000)
+    #lightCreate(1)
+    #lightColor(1, 20000 * vec(255,50,0))
+    #lightParent(1, entity())
+    #lightDistance(1, 50000)
 
 }
 # END FIRST
 
 
  # PYRAMID ROTATES CONTINUOUSLY
-holoAng(97, ang(0, Cur * 8, -180))
+#holoAng(97, ang(0, Cur * 8, -180))
 
 
 
 function funcFindSidrats() {
-    
+
     findByClass("gmod_tardis")
     findSortByDistance(entity():pos())
     Tardises = findToArray()
@@ -115,7 +118,7 @@ function funcFindLandingBay() {
     #findByModel("models/beer/wiremod/gps.mdl")
     findByClass("gmod_wire_gps")
     findClipToSphere(entity():pos(),LandingBayRange)
-    findSortByDistance(entity():pos())
+    #findSortByDistance(entity():pos())
     GPSes = findToArray()
     GPSCount = findToArray():count()
 	
@@ -128,7 +131,7 @@ function funcFindLandingBay() {
 		
  ChosenGPS:propFreeze(1)
  ChosenGPS:setMaterial(LandingBayMaterial)
- ChosenGPS:setColor(vec(255,0,0))
+ ChosenGPS:setColor(LandingBayColor)
  ChosenGPS:setAlpha(255)
 
 	}
@@ -196,16 +199,16 @@ holoCreate(Index+40)
 holoModel(Index+40, "cylinder")
 holoPos(Index+40, (ChosenGPS:pos() + E2) / 2)
 holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
-holoScale(Index+40, vec(3,3,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
-holoMaterial(Index+40, "models/alyx/emptool_glow")
-holoColor(Index+40, vec(0,213,255), 255)
+holoScale(Index+40, vec(4,4,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
+holoMaterial(Index+40, "models/props_combine/portalball001_sheet")    # models/alyx/emptool_glow
+holoColor(Index+40, vec(51,153,255), 255)
 
 
-lightCreate(Index+10)
-lightColor(Index+10, 20000 * vec(255,255,255))
-lightPos(Index+10, ChosenGPS:pos())
-lightParent(Index+10, ChosenGPS)
-lightDistance(Index+10, 5000)
+#lightCreate(Index+10)
+#lightColor(Index+10, 20000 * vec(255,255,255))
+#lightPos(Index+10, ChosenGPS:pos())
+#lightParent(Index+10, ChosenGPS)
+#lightDistance(Index+10, 5000)
 
 if (TargetTardis:tardisHealth() > 0 & TargetTardis:tardisHealth() < 20) {
 
@@ -272,7 +275,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
     holoCreate(Index)
     holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
     holoAng(Index, ChosenGPS:angles())
-    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+20,TargetTardis:boxSize():y()+20,TargetTardis:boxSize():z()+5))
+    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+30,TargetTardis:boxSize():y()+30,TargetTardis:boxSize():z()+5))
     holoModel(Index, "cylinder")
     holoMaterial(Index, LandingBayMaterial)
     holoColor(Index, LandingBayColor,255)
@@ -401,7 +404,7 @@ if (FINDBAYS&~FINDBAYS) {
 if(clk("TimerOne")) {
 
     SEQ1 = 1
-    lightDistance(1, 50000)
+    #lightDistance(1, 50000)
     soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 7)
 
     holoMaterial(98, "models/props_combine/masterinterface01c")
@@ -421,14 +424,16 @@ if(clk("TimerOne")) {
     CircleDistance = CircleDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2))
     CircleHoloAngle = CircleDifference:toAngle() + ang(90,0,0)
     
-    # DRAW LINE FROM TIME ROTOR TO COMPUTER
+    # DRAW LINE FROM COMPUTER TO TIME ROTOR
     holoCreate(93)
     holoModel(93, "cylinder")
     holoPos(93, (holoEntity(98):pos() + E2) / 2)
     holoAng(93, CircleHoloAngle)
     holoScale(93, vec(3,3,CircleDistance) / 12)
-    holoMaterial(93, "models/alyx/emptool_glow")
-    holoColor(93, vec(0,213,255), 255)
+    holoMaterial(93, "models/props_combine/tpballglow")
+    holoColor(93, vec(255,00,0), 255)  # vec(0,213,255), 255)
+    
+    # vec(255,132,0 # ORANGE
     
     #holoRenderFX(95, 9)
         
@@ -471,7 +476,7 @@ if(clk("TimerFour")) {
 if(clk("deleteholo")) {
 
     for (I = 10, 40) {
-        lightRemove(I)
+        #lightRemove(I)
     }
 
     for (I = 0, 60) {
@@ -484,17 +489,18 @@ if(clk("deleteholo")) {
     #holoMaterial(98, "matrix")
     
     #holoMaterial(95, "Models/effects/comball_tape")
-    holoColor(95, 20000 * vec(51,153,255))
+    holoColor(95, vec(51,153,255))
     holoRenderFX(95, 0)
         
-    holoMaterial(97, "matrix")
-    holoColor(97, vec(70,255,0)) # PURPLE vec(255,0,255)
+    holoMaterial(97, "models/props_combine/masterinterface01c")
+    holoColor(97, vec(255,255,255)) # PURPLE vec(255,0,255)
     holoRenderFX(97, 0)
     
-    holoMaterial(98, "matrix")
-    holoColor(98, vec(255,0,255))
+    holoMaterial(98, "models/props_combine/masterinterface01c")
+    holoColor(98, vec(0,0,0))
     holoRenderFX(98, 0)
     #holoDeleteAll()
+    
     SEQ1 = 0
     
 }

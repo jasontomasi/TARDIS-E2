@@ -1,4 +1,4 @@
-This repo contains multiple Garry's Mod (GMOD) Wiremod E2 for Dr Matt's TARDIS addon
+My repo for Garry's Mod (GMOD) Wiremod E2's, to control Dr Matt's TARDIS addon
 
 
 # TARDIS-holomap

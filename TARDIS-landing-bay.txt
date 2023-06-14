@@ -1,6 +1,6 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN FINDBAYS
-@persist Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1 Nearby:vector
+@persist Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1 Nearby:vector
 
 runOnChat(1)
 interval(200)
@@ -43,9 +43,12 @@ concmd("wire_expression2_quotasoft 500000")
 
 # CUSTOMISE THESE OPTIONS 
     LandingBayRange = 950
-    LandingBayMaterial = "models/props_combine/tpballglow"
-    LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
+    LandingBayMaterial = "models/props_combine/cit_beacon"
+    LandingBayShield = "models/alyx/emptool_glow"
+    LandingBayColor = vec(0, 255, 255) # vec(randint(50,255),randint(50,255),randint(50,255))
 	
+#ORANGE (255, 93, 0)
+
     # propSpawn("models/maxofs2d/hover_rings.mdl", entity():pos() + vec(0,0,120), ang(0,0,0), 1)
     # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
 
@@ -130,6 +133,7 @@ function funcFindLandingBay() {
 		TargetGPS = ChosenGPS:pos()
 		
  ChosenGPS:propFreeze(1)
+ ChosenGPS:propNotSolid(1)
  ChosenGPS:setMaterial(LandingBayMaterial)
  ChosenGPS:setColor(LandingBayColor)
  ChosenGPS:setAlpha(255)
@@ -159,7 +163,7 @@ Index = 0
     }
     
     if (GPSCount >= TardisCount & (TardisCount > 0)) {
-    print("OK. TARDISES: ", TardisCount, "GPS chips: ", GPSCount)
+    #print("OK. TARDISES: ", TardisCount, "GPS chips: ", GPSCount)
     }
 
 foreach(Index,TargetTardis:entity = Tardises) {
@@ -197,10 +201,11 @@ LandingBayHoloAngle = LandingBayDifference:toAngle() + ang(90,0,0)
 
 holoCreate(Index+40)
 holoModel(Index+40, "cylinder")
+#holoAlpha(Index+40, 100)
 holoPos(Index+40, (ChosenGPS:pos() + E2) / 2)
 holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
 holoScale(Index+40, vec(4,4,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
-holoMaterial(Index+40, "models/props_combine/portalball001_sheet")    # models/alyx/emptool_glow
+holoMaterial(Index+40, "models/props_combine/cit_beacon")    # models/alyx/emptool_glow, models/props_combine/portalball001_sheet, Models/props_combine/masterinterface01c
 holoColor(Index+40, vec(51,153,255), 255)
 
 
@@ -277,13 +282,13 @@ foreach(Index,TargetTardis:entity = Tardises) {
     holoAng(Index, ChosenGPS:angles())
     holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+30,TargetTardis:boxSize():y()+30,TargetTardis:boxSize():z()+5))
     holoModel(Index, "cylinder")
-    holoMaterial(Index, LandingBayMaterial)
+    holoMaterial(Index, LandingBayShield)
     holoColor(Index, LandingBayColor,255)
     
     
     if ((TargetTardis:tardisHealth() > 0) & (TargetTardis:tardisHealth() < 20)) {
-        holoMaterial(Index, "models/effects/splodearc_sheet")
-        #holoColor(Index, vec(255,0,0))
+        holoMaterial(Index, LandingBayShield)
+        holoColor(Index, vec(255,0,0))
         holoRenderFX(Index, 10)
     }
 

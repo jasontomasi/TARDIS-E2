@@ -8,7 +8,7 @@ interval(200)
 
 if (SEQ1 == 1) {
     #T = T + 0.1 * 2.25
-    Timer += 40
+    Timer += 20
     Cring = 0.05 + (sin(Timer+30) * 18)
     Cur = curtime()
 
@@ -25,7 +25,7 @@ if (SEQ1 == 1) {
 
 if (SEQ1 == 0) {
 		      # TIME ROTOR IDLE POS
-        holoPos(95, entity():pos() + vec(0,0,-30))
+        holoPos(95, entity():pos() + vec(0,0,-50))
         # PYRAMID ROTATES CONTINUOUSLY
         holoMaterial(97, "")
         holoColor(97, vec(0,0,0))
@@ -96,7 +96,7 @@ concmd("wire_expression2_quotasoft 500000")
 
  # TIME ROTOR
     holoCreate(95)
-    holoPos(95, entity():pos() + vec(0,0,-25)) # 20 above
+    holoPos(95, entity():pos() + vec(0,0,-50)) # 20 above
     holoModel(95, "models/artixc/mcgannr/rotor.mdl")  # models/doctormemes/newbarp/rotor.mdl
     #holoMaterial(95, "models/alyx/emptool_glow")
     holoColor(95, vec(127,159,255))  #(109,109,109))

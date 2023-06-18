@@ -5,23 +5,33 @@
 runOnChat(1)
 interval(200)
 
-    Cur = curtime()
 
 if (SEQ1 == 1) {
     #T = T + 0.1 * 2.25
     Timer += 40
-    Cring = 0.05 + (sin(Timer+50) * 13)
+    Cring = 0.05 + (sin(Timer+30) * 18)
+    Cur = curtime()
 
-        # TIME ROTOR ASC/DESC WHEN ACTIVE
-        holoPos(95, entity():pos() + vec(0,0,2) - vec(0,0,Cring))
-        holoAng(97, ang(0, Cur * 90, -180))
+        # TIME ROTOR ASC/DESC DURING SEQ
+        holoPos(95, entity():pos() + vec(0,0,-25) - vec(0,0,Cring))
+		      # PYRAMID ROTATES FASTER DURING SEQ
+        holoMaterial(97, "models/props_combine/masterinterface01c")
+		      holoAng(97, ang(0, Cur * 90, -180))
+        holoAng(90, ang(0, Cur * 100, 0))
         #holoAng(95, entity():angles())
+        # CIRCLE COLOUR
+        holoColor(98, vec(255,70,255))
 }
 
 if (SEQ1 == 0) {
-        holoPos(95, entity():pos() + vec(0,0,-12))
-        holoAng(97, ang(0, Cur * 5, -180))
-        #holoAng(95, entity():angles())
+		      # TIME ROTOR IDLE POS
+        holoPos(95, entity():pos() + vec(0,0,-30))
+        # PYRAMID ROTATES CONTINUOUSLY
+        holoMaterial(97, "")
+        holoColor(97, vec(0,0,0))
+		      #holoAng(97, ang(0, Cur * 20, -180))
+        # CIRCLE COLOUR
+        holoColor(98, vec(255,70,255))
 }
 
 
@@ -45,7 +55,7 @@ concmd("wire_expression2_quotasoft 500000")
     LandingBayRange = 950
     LandingBayMaterial = "models/props_combine/cit_beacon"
     LandingBayShield = "models/alyx/emptool_glow"
-    LandingBayColor = vec(0, 255, 255) # vec(randint(50,255),randint(50,255),randint(50,255))
+    LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
 	
 #ORANGE (255, 93, 0)
 
@@ -55,7 +65,7 @@ concmd("wire_expression2_quotasoft 500000")
     soundPlay(1, 10, "ambient/levels/labs/teleport_mechanism_windup3.wav")
 
     SEQ1 = 0
-    E2 = entity():pos() + vec(0,0,3)  #originally 45
+    E2 = entity():pos() + vec(0,0,3)  #original Z axis offset 45
 
 	# CENTRAL SPHERE
     holoCreate(98)
@@ -63,16 +73,16 @@ concmd("wire_expression2_quotasoft 500000")
     holoMaterial(98, "models/props_combine/masterinterface01c")
     holoModel(98, "hq_sphere")
     #holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
-    holoColor(98, vec(0,0,0))
+    holoColor(98, vec(255,70,255))
     holoScaleUnits(98, vec(190,190,190))  # 190
     holoRenderFX(98, 0)
 
  # PYRAMID
     holoCreate(97)
     holoPos(97, entity():pos() + vec(0,0,380))
-    holoMaterial(97, "models/props_combine/masterinterface01c")
+    #holoMaterial(97, "models/props_combine/masterinterface01c")
     holoModel(97, "pyramid")
-    holoColor(97, vec(255,255,255)) # PURPLE vec(255,0,255)
+    holoColor(97, vec(0,0,0)) # PURPLE vec(255,0,255)
     holoScaleUnits(97, vec(200,200,200))
     holoAng(97, ang(0,0,-180))
     #holoAlpha(97, 200)
@@ -86,11 +96,18 @@ concmd("wire_expression2_quotasoft 500000")
 
  # TIME ROTOR
     holoCreate(95)
-    holoPos(95, entity():pos() + vec(0,0,-10)) # 20 above
-    holoModel(95, "models/doctormemes/newbarp/rotor.mdl")
-    holoMaterial(95, "models/alyx/emptool_glow")
-    holoColor(95, vec(51,153,255))  #(109,109,109))
+    holoPos(95, entity():pos() + vec(0,0,-25)) # 20 above
+    holoModel(95, "models/artixc/mcgannr/rotor.mdl")  # models/doctormemes/newbarp/rotor.mdl
+    #holoMaterial(95, "models/alyx/emptool_glow")
+    holoColor(95, vec(127,159,255))  #(109,109,109))
     holoAng(95, entity():angles())
+
+ # CONSOLE ATTACHMENT
+    holoCreate(90)
+    holoPos(90, entity():pos() + vec(0,0,-10))
+    holoModel(90, "models/torrent/tardis_warrior/core.mdl")
+    #holoMaterial(90, "models/alyx/emptool_glow")
+    #holoColor(90, vec(255,223,127))
 
  # TIME ROTOR ILLUMINATION
     #lightCreate(1)
@@ -102,8 +119,6 @@ concmd("wire_expression2_quotasoft 500000")
 # END FIRST
 
 
- # PYRAMID ROTATES CONTINUOUSLY
-#holoAng(97, ang(0, Cur * 8, -180))
 
 
 
@@ -420,7 +435,7 @@ if(clk("TimerOne")) {
     holoColor(97, vec(255,255,255))  # ORANGE
     holoRenderFX(97, 0)
     
-    holoColor(95, vec(255,0,0))
+    holoColor(95, vec(255,191,0))
     holoMaterial(95, "models/alyx/emptool_glow")
     
     
@@ -434,7 +449,7 @@ if(clk("TimerOne")) {
     holoModel(93, "cylinder")
     holoPos(93, (holoEntity(98):pos() + E2) / 2)
     holoAng(93, CircleHoloAngle)
-    holoScale(93, vec(3,3,CircleDistance) / 12)
+    holoScale(93, vec(2,2,CircleDistance) / 12)
     holoMaterial(93, "models/props_combine/tpballglow")
     holoColor(93, vec(255,00,0), 255)  # vec(0,213,255), 255)
     
@@ -493,8 +508,8 @@ if(clk("deleteholo")) {
     holoDelete(93)
     #holoMaterial(98, "matrix")
     
-    #holoMaterial(95, "Models/effects/comball_tape")
-    holoColor(95, vec(51,153,255))
+    holoMaterial(95, "")
+    holoColor(95, vec(127,159,255))
     holoRenderFX(95, 0)
         
     holoMaterial(97, "models/props_combine/masterinterface01c")

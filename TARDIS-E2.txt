@@ -1,6 +1,7 @@
 @name TARDIS Barge
-@inputs TARDIS:entity DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS
-@persist Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number
+@inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS
+@persist [TARDIS TARDISINTERIOR]:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number
+
 
 #ifdef entity:plySpawn()
 	#else
@@ -19,6 +20,10 @@ runOnChat(1)
 
 
 if(first() | dupefinished()) {
+
+    TARDIS = entity():isConstrainedTo():tardisGet()
+    TARDISINTERIOR = entity():isConstrainedTo()
+    TARDIS:createWire(entity(),"XYZ", "XYZ")
 
 DeathRescue = 0
 

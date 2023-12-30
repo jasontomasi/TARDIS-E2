@@ -116,6 +116,9 @@ Enables physlock to prevent it falling through the floor if you are currently in
 **!gps**
 Targets a random wiremod GPS, travels to it, and materialises on it
 
+**!death**
+When player dies, TARDIS will mat at player's spawn location
+
 
 ----------------------------------
 

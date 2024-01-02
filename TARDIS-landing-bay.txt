@@ -1,34 +1,64 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN FINDBAYS
-@persist Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Timer SEQ1 Nearby:vector
+@persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector
 
 runOnChat(1)
-interval(200)
+interval(100)
 
-
-if (SEQ1 == 1) {
-    #T = T + 0.1 * 2.25
-    Timer += 20
-    Cring = 0.05 + (sin(Timer+30) * 18)
+    Timer += 30
+    Cring = 0.05 + (sin(Timer+50) * 13)
+    Cring2 = 0.05 + (sin(Timer+60) * 30)
     Cur = curtime()
 
+E2 = entity():toWorld(vec(0,0,8))
+
+holoAng(90, entity():angles())
+holoAng(95, entity():angles())
+holoAng(96, entity():angles())
+holoAng(97, entity():angles())
+holoAng(98, entity():angles())
+
+if (SEQ1 == 1) {
         # TIME ROTOR ASC/DESC DURING SEQ
         holoPos(95, entity():pos() + vec(0,0,-25) - vec(0,0,Cring))
-		      # PYRAMID ROTATES FASTER DURING SEQ
+        holoMaterial(95, "models/alyx/emptool_glow")
+		
+		# PYRAMID ROTATES FASTER DURING SEQ
         holoMaterial(97, "models/props_combine/masterinterface01c")
-		      holoAng(97, ang(0, Cur * 90, -180))
+        holoAng(97, ang(0, Cur * 30, -180))
+        
+        #SPHERE
+        #holoAng(98, ang(0, Cur * 80, -180))
+        
+        #ATTACHMENT
         holoAng(90, ang(0, Cur * 100, 0))
+        
+        #CONSOLE
+        #holoAng(96, ang(0, Cur * -40, 0))
+        
         #holoAng(95, entity():angles())
         # CIRCLE COLOUR
-        holoColor(98, vec(255,70,255))
+        holoColor(98, vec(51,153,255))
+        holoColor(95, vec(255,191,10)) #GOLD
+
+    for (I = 200, 250) {
+        holoPos(I, holoEntity(I):pos() - vec(0,0,Cring2))
+    }
+        
+    
 }
 
 if (SEQ1 == 0) {
 		      # TIME ROTOR IDLE POS
-        holoPos(95, entity():pos() + vec(0,0,-50))
+        #holoPos(95, E2 + vec(0,0,-25) - vec(0,0,Cring))
+	       holoMaterial(95, "")
+        #holoPos(95, entity():pos() + vec(0,0,-50))
         # PYRAMID ROTATES CONTINUOUSLY
         holoMaterial(97, "")
+        #holoAng(97, ang(0, Cur * 30, -180))
+        holoAng(97, ang(0, 0, -180))
         holoColor(97, vec(0,0,0))
+        holoColor(95, vec(127,159,255))
 		      #holoAng(97, ang(0, Cur * 20, -180))
         # CIRCLE COLOUR
         holoColor(98, vec(255,70,255))
@@ -52,12 +82,17 @@ concmd("wire_expression2_quotatick 500000")
 concmd("wire_expression2_quotasoft 500000")
 
 # CUSTOMISE THESE OPTIONS 
-    LandingBayRange = 950
+    LandingBayRange = 1024
     LandingBayMaterial = "models/props_combine/cit_beacon"
     LandingBayShield = "models/alyx/emptool_glow"
     LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
-	
-#ORANGE (255, 93, 0)
+
+# ORANGE (255, 93, 0)
+# PURPLE (255,70,255)
+
+	#R = R + 100 * 5
+	#R2 = R2 + 150 * 5
+	#R3 = R3 + 200 * 5
 
     # propSpawn("models/maxofs2d/hover_rings.mdl", entity():pos() + vec(0,0,120), ang(0,0,0), 1)
     # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
@@ -65,11 +100,13 @@ concmd("wire_expression2_quotasoft 500000")
     soundPlay(1, 10, "ambient/levels/labs/teleport_mechanism_windup3.wav")
 
     SEQ1 = 0
-    E2 = entity():pos() + vec(0,0,3)  #original Z axis offset 45
+    #E2 = entity():pos() + vec(0,0,8)  #original Z axis offset 45
+    E2 = entity():toWorld(vec(0,0,8))
 
 	# CENTRAL SPHERE
     holoCreate(98)
-    holoPos(98, entity():pos() + vec(0,0,450))
+    holoParent(98, entity())
+    holoPos(98, E2 + vec(0,0,400))  #holoPos(98, E2 + vec(0,0,450))
     holoMaterial(98, "models/props_combine/masterinterface01c")
     holoModel(98, "hq_sphere")
     #holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
@@ -79,24 +116,27 @@ concmd("wire_expression2_quotasoft 500000")
 
  # PYRAMID
     holoCreate(97)
-    holoPos(97, entity():pos() + vec(0,0,380))
+    holoParent(97, entity())
+    holoPos(97, E2 + vec(0,0,330))
     #holoMaterial(97, "models/props_combine/masterinterface01c")
     holoModel(97, "pyramid")
-    holoColor(97, vec(0,0,0)) # PURPLE vec(255,0,255)
+    holoColor(97, vec(0,0,0))
     holoScaleUnits(97, vec(200,200,200))
-    holoAng(97, ang(0,0,-180))
+    holoAng(97, entity():angles() + ang(0,0,-180))
     #holoAlpha(97, 200)
 
  # CONSOLE
     holoCreate(96)
-    holoPos(96, entity():pos() + vec(0,0,-5))
+    holoParent(96, entity())
+    holoPos(96, E2 + vec(0,0,-5))
     #holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
     holoModel(96, "models/doctormemes/keltyj/console.mdl")
     holoAng(96, entity():angles())
 
  # TIME ROTOR
     holoCreate(95)
-    holoPos(95, entity():pos() + vec(0,0,-50)) # 20 above
+    holoParent(95, entity())
+    holoPos(95, E2 + vec(0,0,-40)) # 20 above
     holoModel(95, "models/artixc/mcgannr/rotor.mdl")  # models/doctormemes/newbarp/rotor.mdl
     #holoMaterial(95, "models/alyx/emptool_glow")
     holoColor(95, vec(127,159,255))  #(109,109,109))
@@ -104,10 +144,12 @@ concmd("wire_expression2_quotasoft 500000")
 
  # CONSOLE ATTACHMENT
     holoCreate(90)
-    holoPos(90, entity():pos() + vec(0,0,-10))
-    holoModel(90, "models/torrent/tardis_warrior/core.mdl")
+    holoParent(90, entity())
+    holoPos(90, entity():pos())
+    holoModel(90, "models/artixc/mcgannr/console_gutters.mdl")
     #holoMaterial(90, "models/alyx/emptool_glow")
     #holoColor(90, vec(255,223,127))
+    holoAng(90, entity():angles())
 
  # TIME ROTOR ILLUMINATION
     #lightCreate(1)
@@ -219,7 +261,7 @@ holoModel(Index+40, "cylinder")
 #holoAlpha(Index+40, 100)
 holoPos(Index+40, (ChosenGPS:pos() + E2) / 2)
 holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
-holoScale(Index+40, vec(4,4,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
+holoScale(Index+40, vec(6,6,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
 holoMaterial(Index+40, "models/props_combine/cit_beacon")    # models/alyx/emptool_glow, models/props_combine/portalball001_sheet, Models/props_combine/masterinterface01c
 holoColor(Index+40, vec(51,153,255), 255)
 
@@ -291,7 +333,6 @@ foreach(Index,TargetTardis:entity = Tardises) {
     TargetGPS = ChosenGPS:pos()
     GPSBoxTop = ChosenGPS:aabbMax():z()
 
-
     holoCreate(Index)
     holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
     holoAng(Index, ChosenGPS:angles())
@@ -299,16 +340,41 @@ foreach(Index,TargetTardis:entity = Tardises) {
     holoModel(Index, "cylinder")
     holoMaterial(Index, LandingBayShield)
     holoColor(Index, LandingBayColor,255)
-    
-    
-    if ((TargetTardis:tardisHealth() > 0) & (TargetTardis:tardisHealth() < 20)) {
-        holoMaterial(Index, LandingBayShield)
-        holoColor(Index, vec(255,0,0))
-        holoRenderFX(Index, 10)
-    }
+
+
+
+ # TORUS RINGS ON EACH BAY
+    holoCreate(Index+200)
+    holoPos(Index+200, TargetGPS + vec(0,0,40))
+    holoAng(Index+200, ChosenGPS:angles())
+    holoScaleUnits(Index+200, vec(TargetTardis:boxSize():x()+35, TargetTardis:boxSize():y()+35, 40))
+    holoModel(Index+200, "hq_torus_thin")  # hq_torus_thin, 
+    #holoMaterial(Index+200, "models/props_combine/stasisfield_beam")
+    holoColor(Index+200, vec(250,0,0), 200)
+
+
+
+
+
 
     if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
+    }
+
+    if ((TargetTardis:tardisHealth() > 0) & (TargetTardis:tardisHealth() < 20)) {
+		
+        holoMaterial(Index, LandingBayShield)
+        holoColor(Index, vec(255,0,0))
+        holoRenderFX(Index, 10)
+		
+		TardisMass = TargetTardis:mass()
+		TargetTardis:applyAngForce(ang(0, TardisMass*200, 0))
+	
+		SickTardisIncoming = 1
+    }
+	
+    if(TargetTardis:tardisFlying()==1) {
+		TargetTardis:tardisFlightmode()
             }
     if(TargetTardis:tardisPhyslocked()==0) {
 		TargetTardis:tardisPhyslock()
@@ -331,7 +397,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
 			}
 
     timer("deleteholo",18000)
-    timer("arrivalchecks",22000)
+    timer("arrivalchecks",23000)
 
 	}
 
@@ -343,7 +409,15 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
 
 }
+# END FOREACH
 
+    if(SickTardisIncoming == 1) {
+        ParadoxRandom = random(1000,3000)
+        ParadoxTimer = round(ParadoxRandom)
+        timer("paradox1",500)
+        timer("paradox1",2000)
+        timer("paradox1",4000)
+    }
 
 }
 # END FUNC
@@ -425,19 +499,18 @@ if(clk("TimerOne")) {
 
     SEQ1 = 1
     #lightDistance(1, 50000)
-    soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 7)
+    soundPlay(2, 10, "drmatt/tardis/flight_loop_damaged.wav", 20)
 
-    holoMaterial(98, "models/props_combine/masterinterface01c")
-    holoColor(98, vec(255,70,255))  # ORANGE
+    #holoMaterial(98, "models/props_combine/masterinterface01c")
+    #holoColor(98, vec(255,70,255))  # ORANGE
     #holoRenderFX(98, 15)
     
-    holoMaterial(97, "models/props_combine/masterinterface01c")
-    holoColor(97, vec(255,255,255))  # ORANGE
-    holoRenderFX(97, 0)
+    #holoMaterial(97, "models/props_combine/masterinterface01c")
+    #holoColor(97, vec(255,255,255))  # ORANGE
+    #holoRenderFX(97, 0)
     
-    holoColor(95, vec(255,191,0))
-    holoMaterial(95, "models/alyx/emptool_glow")
-    
+    #holoColor(95, vec(255,191,0))
+    #holoMaterial(95, "models/alyx/emptool_glow")
     
     # E2 = entity():pos() + vec(0,0,50)
     CircleDifference = holoEntity(98):pos() - E2						#Subtract them to make a direction
@@ -451,7 +524,7 @@ if(clk("TimerOne")) {
     holoAng(93, CircleHoloAngle)
     holoScale(93, vec(2,2,CircleDistance) / 12)
     holoMaterial(93, "models/props_combine/tpballglow")
-    holoColor(93, vec(255,00,0), 255)  # vec(0,213,255), 255)
+    holoColor(93, vec(0,255,0), 255)  # vec(0,213,255), 255)
     
     # vec(255,132,0 # ORANGE
     
@@ -489,8 +562,32 @@ if(clk("TimerFour")) {
 }
 
 
+if(clk("paradox1")) {
+    Explodable1 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(0,150,10), ang(0,0,0),1)
+    Explodable1:setAlpha(0)
+    Explodable1:propBreak()
+    timer("paradox2", ParadoxTimer * 2)
+}
 
+if(clk("paradox2")) {
+    Explodable2 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(-150,150,10), ang(0,0,0),1)
+    Explodable2:setAlpha(0)
+    Explodable2:propBreak()
+    timer("paradox3", ParadoxTimer * 2)
+}
 
+if(clk("paradox3")) {
+    Explodable3 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(150,-150,10), ang(0,0,0),1)
+    Explodable3:setAlpha(0)
+    Explodable3:propBreak()
+    timer("paradox4", ParadoxTimer * 2)
+}
+
+if(clk("paradox4")) {
+    Explodable4 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(150,0,10), ang(0,0,0),1)
+    Explodable4:setAlpha(0)
+    Explodable4:propBreak()
+}
 
 
 if(clk("deleteholo")) {
@@ -502,27 +599,18 @@ if(clk("deleteholo")) {
     for (I = 0, 60) {
         holoDelete(I)
     }
+    
+    for (I = 200, 250) {
+        holoDelete(I)
+    }
+
     #holoDelete(96)
-	   holoDelete(78)
+	holoDelete(78)
     holoDelete(79)
     holoDelete(93)
-    #holoMaterial(98, "matrix")
-    
-    holoMaterial(95, "")
-    holoColor(95, vec(127,159,255))
-    holoRenderFX(95, 0)
-        
-    holoMaterial(97, "models/props_combine/masterinterface01c")
-    holoColor(97, vec(255,255,255)) # PURPLE vec(255,0,255)
-    holoRenderFX(97, 0)
-    
-    holoMaterial(98, "models/props_combine/masterinterface01c")
-    holoColor(98, vec(0,0,0))
-    holoRenderFX(98, 0)
     #holoDeleteAll()
     
     SEQ1 = 0
-    
 }
 
 if(clk("arrivalchecks")) {
@@ -537,6 +625,10 @@ if(clk("arrivalchecks")) {
     CheckArrived = inrange(TargetTardis:pos(), TargetGPS + vec(-60,-60,-60), TargetGPS + vec(60,60,60))
     
     if(CheckArrived == 1) {
+        
+        if(TargetTardis:tardisLocked()==1) {
+                TargetTardis:tardisLock()
+	        }
     
         if (TargetTardis:tardisHealth() < 20 ) {
             

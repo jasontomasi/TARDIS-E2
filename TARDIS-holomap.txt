@@ -3,18 +3,38 @@
 @outputs
 @persist TardisCount:number Tardises:array Radius:number Multiplier:number Height:number Position:vector
 
+## Reserved holo IDs:
+## 0: backplane
+## 1-20: TARDISes
+## 21-40: circles around TARDISes
+## 80-90: triangles
+##
+## COLOURS: Turquoise (0,255,230), medium blue (0,155,255), white (255,255,255)
+##
+## IDEAS:
+## - move this E2 onto the landing bay E2, and have the holos hovering above the console
+## - use PropSpawn to spawn angels when...
+## 
+##
+##
+
+
+
+
 interval(200)
 
-    Radius = 40
-    Multiplier = 20
-    Height = 35
+    Radius = 60
+    Multiplier = 80
+    Height = 5
+
 
 if (first()) {
 
+
 	Position = entity():pos()
 
+    # Spiraling triangles with trails
     for (A = 80, 90) {
-    
         holoCreate(A):setTrails(4,4,20,"trails/laser",vec(255,255,255),255)
         #holoModel(A,"cone")
         #holoMaterial(A,"models/wireframe")
@@ -22,16 +42,15 @@ if (first()) {
         holoColor(A,vec(255,255,255))
     }
 
-
-
 	# Black backdrop for the other holograms
 	holoCreate(0,entity():pos() + vec(0,0,1), vec(40,40,1), ang(), vec())
 	holoModel(0,"plane")
 	holoAlpha(0, 250)
- holoColor(0, vec(50,50,50))
+	holoColor(0, vec(50,50,50))
 
-timer("start", 1000)
-timer("holotardis", 2000)
+# Keep timers spaced apart so we don't go over tick quota upon spawning E2
+timer("findnew", 3000)
+timer("holotardis", 7000)
 
 
 function funcFindTargets() {
@@ -45,8 +64,15 @@ function funcFindTargets() {
         holoDelete(C)
     }
 
- timer("start", 8000)
+foreach(Index,TargetTardis:entity = Tardises) {
+	if (TargetTardis:isValid()) {
+		# Create TARDIS holograms. Scale of 0.08 looks good
+		holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
+	}
 }
+ timer("findnew", 6000)
+
+} #ENDFUNC
 
 
 function funcHoloTardis() {
@@ -55,12 +81,10 @@ foreach(Index,TargetTardis:entity = Tardises) {
     
     if (TargetTardis:isValid()) {
 
- # Scale of 0.08 looks good
-	holoCreate(Index, entity():pos(), vec(0.08,0.08,0.08) )
 	holoAlpha(Index, 255)
- # Turquoise vec(0,255,230), medium blue vec(0,155,255), white vec(255,255,255)
+
 	holoColor(Index, vec(0,155,255))
-	# Get position of target, localize the vector, place at expression chip, and scale down vec(100,100,50)
+	# Get position of target, localize the vector, relative to expression chip, and scale down vec(100,100,50)
 	holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(100,100,40)) + vec(0,0,5) )
 	holoModel(Index, "models/the_sniper_9/doctorwho/tardis/tardis.mdl")
 	holoMaterial(Index, "")
@@ -74,7 +98,8 @@ if (holoEntity(Index+20):isValid()) {
 if (TargetTardis:tardisHealth() < 20) {
     holoColor(Index, vec(255,0,0))
     #holoRenderFX(Index, 9)
-    
+
+    		# Draw extra circle around damaged TARDISes, with an ID of Index+20
                     holoCreate(Index+20, holoEntity(Index):pos() + vec(0,0,5))
                     holoParent(Index+20, holoEntity(Index))
                     holoModel(Index+20, "sphere3")
@@ -86,15 +111,16 @@ if (TargetTardis:tardisHealth() < 20) {
                     holoAng(Index+20, holoEntity(Index):angles())
     }
 
-if (TargetTardis:tardisHealth() > 20) {
+# If any TARDIS was previously damaged but is now repaired, it would've had circle holo (ID of Index+20), so delete the circle
+if (TargetTardis:tardisHealth() >= 20) {
     if (holoEntity(Index+20):isValid()) {
             holoDelete(Index+20)
-    }    
     }
+}
 
 if (TargetTardis:tardisInVortex() == 1) {
     #holoAlpha(Index, 230)
-    holoMaterial(Index, "effects/minescreen_static01_")
+    #holoMaterial(Index, "models/props_forest/waterfall001")   # effects/minescreen_static01_, 
 
         if (TargetTardis:tardisHealth() < 20) {
             # Make the angles more dramatic when damaged
@@ -113,21 +139,23 @@ if (TargetTardis:tardisInVortex() == 1) {
         }
     else{
     holoAng(Index, ang(randint(-30,30),randint(-30,30),randint(-30,30)))
-    holoColor(Index, vec(255,255,255))
-    holoAlpha(Index, 128)
+    holoColor(Index, vec(161,255,255))
+    #holoAlpha(Index, 128)
     }
-    
+
     holoPos(Index, entity():pos() + vec(randint(-50,50), randint(-50,50), randint(30,100)))   
 }
+
 if (TargetTardis:tardisMoving() == 1) {
     holoColor(Index, vec(255,255,0))
     holoRenderFX(Index,9)
     }
 
-    }
-    else {}
+}
+	else {}
 }
 
+ #Call function again every X millisecomnds
  timer("holotardis", 3000)
 
 }
@@ -135,14 +163,12 @@ if (TargetTardis:tardisMoving() == 1) {
 }
 
 
-
+# Move the spiraling triangles & trails
 for (D = 80, 90) {
-
         holoPos(D, entity():pos() + vec(sin(curtime()*Multiplier)*Radius, cos(curtime()*Multiplier)*Radius, Height))
         Radius = Radius + 10
         Multiplier = Multiplier + 2
         Height = Height + 5
-
 }
 
 
@@ -152,7 +178,7 @@ for (D = 80, 90) {
 
 
 
-if(clk("start")) {
+if(clk("findnew")) {
     funcFindTargets()
 }
 

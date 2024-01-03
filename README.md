@@ -1,7 +1,7 @@
 My repo for Garry's Mod (GMOD) Wiremod E2's, to control Dr Matt's TARDIS addon
 
 These E2's utilise the wiremod E2 functions which are documented here:
-https://github.com/MattJeanes/TARDIS/blob/dev/lua/entities/gmod_wire_expression2/core/custom/cl_tardis2.lua
+https://github.com/MattJeanes/TARDIS/blob/dev/lua/entities/gmod_wire_expression2/core/custom/cl_tardis.lua
 
 
 

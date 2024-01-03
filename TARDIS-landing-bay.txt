@@ -3,7 +3,7 @@
 @persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector
 
 runOnChat(1)
-interval(100)
+interval(200)
 
     Timer += 30
     Cring = 0.05 + (sin(Timer+50) * 13)
@@ -12,11 +12,11 @@ interval(100)
 
 E2 = entity():toWorld(vec(0,0,8))
 
-holoAng(90, entity():angles())
-holoAng(95, entity():angles())
-holoAng(96, entity():angles())
-holoAng(97, entity():angles())
-holoAng(98, entity():angles())
+#holoAng(90, entity():angles())
+#holoAng(95, entity():angles())
+#holoAng(96, entity():angles())
+#holoAng(97, entity():angles())
+#holoAng(98, entity():angles())
 
 if (SEQ1 == 1) {
         # TIME ROTOR ASC/DESC DURING SEQ
@@ -25,13 +25,13 @@ if (SEQ1 == 1) {
 		
 		# PYRAMID ROTATES FASTER DURING SEQ
         holoMaterial(97, "models/props_combine/masterinterface01c")
-        holoAng(97, ang(0, Cur * 30, -180))
+        holoAng(97, ang(0, 0, -180))
         
         #SPHERE
-        #holoAng(98, ang(0, Cur * 80, -180))
+        holoAng(98, ang(0, Cur * 50, 180))
         
         #ATTACHMENT
-        holoAng(90, ang(0, Cur * 100, 0))
+        holoAng(90, ang(0, Cur * 25, 0))
         
         #CONSOLE
         #holoAng(96, ang(0, Cur * -40, 0))
@@ -264,6 +264,7 @@ holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because i
 holoScale(Index+40, vec(6,6,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
 holoMaterial(Index+40, "models/props_combine/cit_beacon")    # models/alyx/emptool_glow, models/props_combine/portalball001_sheet, Models/props_combine/masterinterface01c
 holoColor(Index+40, vec(51,153,255), 255)
+#Colours: BLUE 51,153,255.
 
 
 #lightCreate(Index+10)
@@ -357,7 +358,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
 
 
-    if(TargetTardis:tardisPowered()==0) {
+    if( (TargetTardis:tardisPowered()==0) & (TargetTardis:tardisArtronEnergy() >4 ) ) {
 		TargetTardis:tardisPower()
     }
 
@@ -373,6 +374,9 @@ foreach(Index,TargetTardis:entity = Tardises) {
 		SickTardisIncoming = 1
     }
 	
+	if(TargetTardis:tardisBraking()==1) {
+		TargetTardis:tardisHandbrake()
+        }
     if(TargetTardis:tardisFlying()==1) {
 		TargetTardis:tardisFlightmode()
             }
@@ -412,7 +416,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
 # END FOREACH
 
     if(SickTardisIncoming == 1) {
-        ParadoxRandom = random(1000,3000)
+        ParadoxRandom = random(3000,6000)
         ParadoxTimer = round(ParadoxRandom)
         timer("paradox1",500)
         timer("paradox1",2000)
@@ -439,8 +443,11 @@ function funcClearLandingBay() {
         if(TargetTardis:tardisLongflighted() == 0) {
 		          TargetTardis:tardisLongflight()
 	        }
+        if(TargetTardis:tardisBraking()==1) {
+		              TargetTardis:tardisHandbrake()
+        }
 
-        TargetTardis:tardisFastDemat()
+        TargetTardis:tardisDemat(vec(0,0,0), ang(0,0,0))
 }
 else {}
     }
@@ -524,7 +531,7 @@ if(clk("TimerOne")) {
     holoAng(93, CircleHoloAngle)
     holoScale(93, vec(2,2,CircleDistance) / 12)
     holoMaterial(93, "models/props_combine/tpballglow")
-    holoColor(93, vec(0,255,0), 255)  # vec(0,213,255), 255)
+    holoColor(93, vec(255,0,0), 255)  # vec(0,213,255), 255)
     
     # vec(255,132,0 # ORANGE
     
@@ -561,30 +568,31 @@ if(clk("TimerFour")) {
     funcRecallSidrats()
 }
 
+# BOOM: models/props_c17/oildrum001_explosive.mdl, models/the_sniper_9/doctorwho/extras/angels/angelattack.mdl
 
 if(clk("paradox1")) {
-    Explodable1 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(0,150,10), ang(0,0,0),1)
+    Explodable1 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() + vec(0,150,100), ang(0,0,0),1)
     Explodable1:setAlpha(0)
     Explodable1:propBreak()
     timer("paradox2", ParadoxTimer * 2)
 }
 
 if(clk("paradox2")) {
-    Explodable2 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(-150,150,10), ang(0,0,0),1)
+    Explodable2 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() + vec(-150,150,100), ang(0,0,0),1)
     Explodable2:setAlpha(0)
     Explodable2:propBreak()
     timer("paradox3", ParadoxTimer * 2)
 }
 
 if(clk("paradox3")) {
-    Explodable3 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(150,-150,10), ang(0,0,0),1)
+    Explodable3 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() + vec(150,-150,100), ang(0,0,0),1)
     Explodable3:setAlpha(0)
     Explodable3:propBreak()
     timer("paradox4", ParadoxTimer * 2)
 }
 
 if(clk("paradox4")) {
-    Explodable4 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() - vec(150,0,10), ang(0,0,0),1)
+    Explodable4 = propSpawn("models/props_c17/oildrum001_explosive.mdl", entity():pos() + vec(150,0,100), ang(0,0,0),1)
     Explodable4:setAlpha(0)
     Explodable4:propBreak()
 }
@@ -629,6 +637,9 @@ if(clk("arrivalchecks")) {
         if(TargetTardis:tardisLocked()==1) {
                 TargetTardis:tardisLock()
 	        }
+        if(TargetTardis:tardisBraking()==0) {
+		              TargetTardis:tardisHandbrake()
+        }
     
         if (TargetTardis:tardisHealth() < 20 ) {
             

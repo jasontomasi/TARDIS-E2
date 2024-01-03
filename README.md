@@ -14,7 +14,9 @@ This E2 shows a hologram of all TARDISes on the map, and colour codes them accor
 
 Hologram colors:
 
-- **FLICKERING**: In vortex/dematerialising/rematerialising
+- **WHITE**: In vortex
+
+- **YELLOW**: Dematerialising/Rematerialising
 
 - **BLUE**: Materialised
 

@@ -80,6 +80,9 @@ Prints the health percentage of the TARDIS
 **!power**
 Toggles power on and off
 
+**!brake**
+Toggles handbrake on and off
+
 **!hads**
 Toggles HADS on and off
 

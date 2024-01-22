@@ -27,6 +27,7 @@ if(first() | dupefinished()) {
 
 DeathRescue = 0
 
+
 function funcPlayerDeath() {
 
 	if(TARDIS:tardisHealth() == 0){
@@ -55,19 +56,17 @@ function funcPlayerDeath() {
 		TARDIS:tardisLongflight()
 	}
 
-	           if(TARDIS:tardisInVortex()==1) {
-					TARDIS:tardisSetDestination(owner():pos(), ang(0,0,0))
-					TARDIS:tardisMaterialise()
-					#timer("WaitingForRemat", 1000)
-            }
+	if(TARDIS:tardisInVortex()==1) {
+		TARDIS:tardisSetDestination(owner():pos(), ang(0,0,0))
+		TARDIS:tardisMaterialise()
+		#timer("WaitingForRemat", 1000)
+    }
+    if(TARDIS:tardisInVortex()==0) {
+		TARDIS:tardisDemat(owner():pos(), ang(0,0,0))
+		#timer("WaitingForDemat", 1000)
+	}
+	}
 
-            else {
-                if(TARDIS:tardisInVortex()==0) {
-					TARDIS:tardisDemat(owner():pos(), ang(0,0,0))
-					#timer("WaitingForDemat", 1000)
-					}
-            }
-}
 } # END FUNCTION
 
 
@@ -83,12 +82,13 @@ function makeItPretty(Index:number, Model:string, Where:vector, Angle:angle, Siz
 function funcBarge()
 	{
     #OWNER=TARDIS:owner()
-            if(TARDIS:tardisPowered()==0){
-					TARDIS:tardisPower()
-            }
-			if(TARDIS:tardisPhyslocked()==0){
-					TARDIS:tardisPhyslock()
-            }
+	
+    if(TARDIS:tardisPowered()==0){
+		TARDIS:tardisPower()
+    }
+	if(TARDIS:tardisPhyslocked()==0){
+		TARDIS:tardisPhyslock()
+    }
 	if(TARDIS:tardisLongflighted()==1){
 		TARDIS:tardisLongflight()
 	}
@@ -228,9 +228,7 @@ M:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
 ARTRONFINALAMOUNT = TARDIS:tardisArtronEnergy() - 6
 TardisBarge:tardisRemoveArtronEnergy(ARTRONFINALAMOUNT)
 
-
 } # END FUNCTION
-
 
 
 function funcTargetPlayer(ARGUMENT1:string)
@@ -270,8 +268,12 @@ function funcTargetPlayer(ARGUMENT1:string)
         }
 	} # END FUNCTION
 
+
 function funcEscape()
 	{
+	
+	if((TARDIS:tardisHealth() > 0) & (TARDIS:tardisArtronEnergy() > 5)) {
+	
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
@@ -280,12 +282,17 @@ function funcEscape()
             }
             if(TARDIS:tardisLongflighted()==0){
 		              TARDIS:tardisLongflight()
-	        }
+	           }
             if(TARDIS:tardisIsomorphic()==0){
 		              TARDIS:tardisIsomorph()
             }
+            if(TARDIS:tardisBraking()==1){
+		              TARDIS:tardisHandbrake()
+            }
 			TARDIS:tardisDemat(vec(0,0,0), ang(0,0,0))
+	}
 	} # END FUNCTION
+
 
 function funcLockdoor()
 	{
@@ -302,10 +309,12 @@ function funcLockdoor()
             }
 	} # END FUNCTION
 
+
 function funcPhyslock()
 	{
 		              TARDIS:tardisPhyslock()
 	} # END FUNCTION
+
 
 function funcMaterialise()
 	{
@@ -313,6 +322,7 @@ function funcMaterialise()
 			TARDIS:tardisMaterialise()
             }
 	} # END FUNCTION
+
 
 function funcHealth()
 	{
@@ -324,6 +334,7 @@ function funcHealth()
 			print("Health: " +TARDIS:tardisHealth() + "%")
             }
 	} # END FUNCTION
+
 
 function funcHADS()
 	{
@@ -339,6 +350,34 @@ function funcHADS()
             }
 	} # END FUNCTION
 
+
+function funcHandbrake()
+	{
+			TARDIS:tardisHandbrake()
+            if(TARDIS:tardisBraking()==1){
+		              print("Handbrake: ON")
+            }
+            elseif(TARDIS:tardisBraking()==0){
+		              print("Handbrake: OFF")
+            }
+	} # END FUNCTION
+
+
+function funcSneak()
+	{
+			if(TARDIS:tardisPowered()==0){
+		    TARDIS:tardisPower()
+            }
+			
+            if(TARDIS:tardisVisible()==1){
+		              print("Cloak: OFF")
+            }
+            elseif(TARDIS:tardisVisible()==0){
+		              print("Cloak: ON")
+            }
+	} # END FUNCTION
+
+
 function funcRepair()
 	{
             if(TARDIS:tardisPowered()==0){
@@ -346,6 +385,7 @@ function funcRepair()
             }
 		    TARDIS:tardisSelfrepair()
 	} # END FUNCTION
+
 
 function funcWhere()
 	{
@@ -360,6 +400,7 @@ function funcWhere()
             }
 	} # END FUNCTION
 
+
 function funcReturn()
 	{
             if(TARDIS:tardisPowered()==0){
@@ -367,6 +408,7 @@ function funcReturn()
             }
             TARDIS:tardisFastReturn()
 	} # END FUNCTION
+
 
 function funcGPS()
 	{
@@ -402,6 +444,7 @@ function funcGPS()
 			print("Can't find GPS to lock on to.")
 		}
 	} # END FUNCTION
+
 
 function funcStatus()
 	{
@@ -443,6 +486,7 @@ function funcStatus()
 			TardisCount = findToArray():count()
 			print("TARDISes in universe: ", TardisCount)
 	} # END FUNCTION
+
 
 function funcComeToMe()
 	{
@@ -494,6 +538,7 @@ function funcComeToMe()
 	}
 
 } # END FUNCTION
+
 
 }  # END OF FIRST
 
@@ -626,7 +671,12 @@ elseif(COMMAND=="!power") {
 
 elseif(COMMAND=="!brake") {
     hideChat(1)
-			TARDIS:tardisHandbrake()
+			funcHandbrake()
+    }
+
+elseif(COMMAND=="!sneak") {
+    hideChat(1)
+			funcSneak()
     }
 
 elseif(COMMAND=="!hads") {
@@ -692,7 +742,7 @@ elseif(COMMAND=="!death") {
 
 elseif (TARDIS:isValid() == 0) {
 
-	print("First wire the E2 chip to TARDIS exterior")
+	print("First wire the E2 chip to TARDIS")
 
 }
 

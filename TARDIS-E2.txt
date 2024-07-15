@@ -242,7 +242,7 @@ function funcTargetPlayer(ARGUMENT1:string)
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
-            if(TARDIS:tardisLocked()==0){
+            if(TARDIS:tardisOpened()==0){
 		              TARDIS:tardisLock()
             }
             if(TARDIS:tardisPhyslocked()==0){
@@ -277,7 +277,7 @@ function funcEscape()
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
-            if(TARDIS:tardisLocked()==0){
+            if(TARDIS:tardisOpened()==0){
 		              TARDIS:tardisLock()
             }
             if(TARDIS:tardisLongflighted()==0){
@@ -291,6 +291,9 @@ function funcEscape()
             }
 
 			TARDIS:tardisDemat(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
+
+			timer("EscapeFuncMakeSane",6000)
+			
 	}
 	} # END FUNCTION
 
@@ -320,8 +323,6 @@ function funcPhyslock()
 function funcMaterialise()
 	{
             if(TARDIS:tardisInVortex()==1){
-			
-			TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
 			TARDIS:tardisMaterialise()
             }
 	} # END FUNCTION
@@ -420,7 +421,7 @@ function funcGPS()
             if(TARDIS:tardisPowered()==0){
 				        TARDIS:tardisPower()
             }
-            if(TARDIS:tardisLocked()==0){
+            if(TARDIS:tardisOpened()==1){
 		              TARDIS:tardisLock()
             }
             if(TARDIS:tardisPhyslocked()==0){
@@ -499,9 +500,9 @@ function funcComeToMe()
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
-            #if(TARDIS:tardisOpened()==1){
-		          #    TARDIS:tardisDoors()
-            #}
+            if(TARDIS:tardisOpened()==1){
+		              TARDIS:tardisLock()
+            }
             if(TARDIS:tardisPhyslocked()==0){
 		              TARDIS:tardisPhyslock()
             }
@@ -547,11 +548,11 @@ function funcComeToMe()
 
 
 
+### TIMERS
 
-
-
-
-
+if(clk("EscapeFuncMakeSane")) {
+	TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
+}
 
 if (TARDIS:isValid()) {
 
@@ -566,6 +567,7 @@ if(clk("playerdeath")) {
 }
 
 
+### WIRE BUTTONS
 
 if (DEMAT&~DEMAT) {
 	funcEscape()

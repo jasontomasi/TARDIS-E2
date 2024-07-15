@@ -289,7 +289,8 @@ function funcEscape()
             if(TARDIS:tardisBraking()==1){
 		              TARDIS:tardisHandbrake()
             }
-			TARDIS:tardisDemat(vec(0,0,0), ang(0,0,0))
+
+			TARDIS:tardisDemat(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
 	}
 	} # END FUNCTION
 
@@ -319,6 +320,8 @@ function funcPhyslock()
 function funcMaterialise()
 	{
             if(TARDIS:tardisInVortex()==1){
+			
+			TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
 			TARDIS:tardisMaterialise()
             }
 	} # END FUNCTION

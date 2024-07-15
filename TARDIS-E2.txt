@@ -243,7 +243,7 @@ function funcTargetPlayer(ARGUMENT1:string)
 		              TARDIS:tardisPower()
             }
             if(TARDIS:tardisOpened()==0){
-		              TARDIS:tardisLock()
+		              TARDIS:tardisDoor()
             }
             if(TARDIS:tardisPhyslocked()==0){
 		              TARDIS:tardisPhyslock()
@@ -278,7 +278,7 @@ function funcEscape()
 		              TARDIS:tardisPower()
             }
             if(TARDIS:tardisOpened()==0){
-		              TARDIS:tardisLock()
+		              TARDIS:tardisDoor()
             }
             if(TARDIS:tardisLongflighted()==0){
 		              TARDIS:tardisLongflight()
@@ -422,7 +422,7 @@ function funcGPS()
 				        TARDIS:tardisPower()
             }
             if(TARDIS:tardisOpened()==1){
-		              TARDIS:tardisLock()
+		              TARDIS:tardisDoor()
             }
             if(TARDIS:tardisPhyslocked()==0){
 		          TARDIS:tardisPhyslock()
@@ -501,7 +501,7 @@ function funcComeToMe()
 		              TARDIS:tardisPower()
             }
             if(TARDIS:tardisOpened()==1){
-		              TARDIS:tardisLock()
+		              TARDIS:tardisDoor()
             }
             if(TARDIS:tardisPhyslocked()==0){
 		              TARDIS:tardisPhyslock()

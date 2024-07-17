@@ -1,6 +1,6 @@
 @name TARDIS Barge
 @inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS
-@persist [TARDIS TARDISINTERIOR]:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number
+@persist [TARDIS TARDISINTERIOR]:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number ARTRONFUEL
 
 
 #ifdef entity:plySpawn()
@@ -9,7 +9,22 @@
 	#endif
 
 
-runOnChat(1)
+
+# A += 10
+# B1 = 50
+# B2 = 55
+# B3 = 60
+
+# holoPos(1,Position1B+vec(0,cos(A)*B1,sin(A)*B1))
+# holoPos(2,Position1B+vec(-cos(A)*B1,sin(A)*B1,cos(A)*B1))
+# holoPos(3,Position1B+vec(cos(A)*B1,sin(A)*B1,cos(A)*B1))
+# holoPos(4,Position1B+vec(0,cos(A)*B2,sin(A)*B2))
+# holoPos(5,Position1B+vec(-cos(A)*B2,sin(A)*B2,cos(A)*B2))
+# holoPos(6,Position1B+vec(cos(A)*B2,sin(A)*B2,cos(A)*B2))
+# holoPos(7,Position1B+vec(0,cos(A)*B3,sin(A)*B3))
+# holoPos(8,Position1B+vec(-cos(A)*B3,sin(A)*B3,cos(A)*B3))
+# holoPos(9,Position1B+vec(cos(A)*B3,sin(A)*B3,cos(A)*B3))
+
 
 
     if(!owner():isAlive() && DeathRescue == 1) {
@@ -20,6 +35,8 @@ runOnChat(1)
 
 
 if(first() | dupefinished()) {
+
+    runOnChat(1)
 
     TARDIS = entity():isConstrainedTo():tardisGet()
     TARDISINTERIOR = entity():isConstrainedTo()
@@ -81,20 +98,21 @@ function makeItPretty(Index:number, Model:string, Where:vector, Angle:angle, Siz
 
 function funcBarge()
 	{
-    #OWNER=TARDIS:owner()
 	
-    if(TARDIS:tardisPowered()==0){
+	if(TARDIS:tardisPowered()==0){
 		TARDIS:tardisPower()
     }
+	if(TARDIS:tardisOpened()==1){
+		TARDIS:tardisDoor()
+	}
 	if(TARDIS:tardisPhyslocked()==0){
 		TARDIS:tardisPhyslock()
     }
 	if(TARDIS:tardisLongflighted()==1){
 		TARDIS:tardisLongflight()
 	}
-	if(TARDIS:tardisLocked()==0){
-		TARDIS:tardisLock()
-	}
+	
+    #OWNER=TARDIS:owner()
 
     OURSELVES=entity():isConstrainedTo()
     #findExcludeEntity(OURSELVES)
@@ -116,10 +134,8 @@ function funcBarge()
     Position8 = TardisBarge:boxMax()
     Position9 = TardisBarge:boxMin()
     Position10 = TardisBarge:toWorld(vec(0,0,20))
-    Position11 = TardisBarge:toWorld(vec(0,0,50))
+    Position11 = TardisBarge:toWorld(vec(0,0,40))
     Position12 = TardisBarge:toWorld(vec(0,0,80))
-
-
     
     #CORNER1 = TardisBarge:boxMax()
     #CORNER2 = TardisBarge:boxMin()
@@ -143,17 +159,17 @@ print(TARDIS:boxMin():x())
 print(TARDIS:boxMin():y())
 print(TARDIS:boxMin():z())
 
+
 print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
 
-			if(TARDIS:tardisLocked()==1){
-					TARDIS:tardisLock()
-			}
-            if(TARDIS:tardisHealth() >= 20){
+            if(TARDIS:tardisHealth() >= 20) {
 			HEALTHY = 1
             }
-            if(TARDIS:tardisHealth() <= 20){
+
+            if(TARDIS:tardisHealth() <= 20) {
 			HEALTHY = 0
             }
+
             if(TARDIS:tardisInVortex()==1){
 					if(HEALTHY == 1) {
 					TARDIS:tardisSetDestination(Position1, ang(0,0,0))
@@ -166,7 +182,7 @@ print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
 					timer("WaitingForRemat", 1000)
 					}
             }
-            if(TARDIS:tardisInVortex()==0){
+            if((TARDIS:tardisInVortex()==0) & (TARDIS:tardisArtronEnergy() >= 6)){
 					if(HEALTHY == 1) {
 					TARDIS:tardisDemat(Position1, ang(0,0,0))
 					timer("WaitingForDemat", 1000)
@@ -176,6 +192,9 @@ print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
 					timer("WaitingForDemat", 1000)
 					}
             }
+			if((TARDIS:tardisInVortex()==0) & (TARDIS:tardisArtronEnergy() < 6)){
+					print("Insufficient fuel to attempt Time-Ram!")
+			}
 
     #makeItPretty(1,"models/effects/splodearc.mdl",Position2,ang(0,0,0),vec(1,1,1),"")
     #makeItPretty(2,"models/effects/splodearc.mdl",Position3,ang(0,0,0),vec(1,1,1),"")
@@ -183,50 +202,48 @@ print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
     #makeItPretty(4,"models/effects/splodearc.mdl",Position5,ang(0,0,0),vec(1,1,1),"")
     makeItPretty(10,"hqsphere",Position1+vec(0,0,50),ang(0,0,0),vec(8,8,8),"models/props_combine/com_shield001a")
 
-B1 = 50
-B2 = 55
-B3 = 60
 
-D = holoCreate(1,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-F = holoCreate(2,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-G = holoCreate(3,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-H = holoCreate(4,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-I = holoCreate(5,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-J = holoCreate(6,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-K = holoCreate(7,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-L = holoCreate(8,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
-M = holoCreate(9,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# D = holoCreate(1,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# F = holoCreate(2,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# G = holoCreate(3,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# H = holoCreate(4,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# I = holoCreate(5,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# J = holoCreate(6,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# K = holoCreate(7,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# L = holoCreate(8,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
+# M = holoCreate(9,Position0+vec(0,0,60),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
 
-D:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-F:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-G:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-H:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-I:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-J:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-K:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-L:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
-M:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# D:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# F:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# G:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# H:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# I:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# J:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# K:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# L:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
+# M:setTrails(7,5,3,"trails/laser",vec(255,255,255),255)
 
 #D:setMaterial("models/alyx/emptool_glow")
 #F:setMaterial("models/alyx/emptool_glow")
 #G:setMaterial("models/alyx/emptool_glow")
 
 
-
-	BOOM1 = effect()
-	BOOM1:setDamageType(512)
-	BOOM1:setScale(20)
-	BOOM1:setMagnitude(100)
-	BOOM1:setRadius(400)
-	BOOM1:setOrigin(Position11)
-	BOOM1:play("Explosion")
-    
+	timer("bargeexplosion1",2000)
 	timer("deleteholo",17000)
 
 ## CLEANUP: clean up if loops to ensure that a TARDIS with 0 health doesn't do barge process
 
-ARTRONFINALAMOUNT = TARDIS:tardisArtronEnergy() - 6
-TardisBarge:tardisRemoveArtronEnergy(ARTRONFINALAMOUNT)
+
+
+    ARTRONCURRENT = TARDIS:tardisArtronEnergy()
+    ARTRONDIFF = ARTRONCURRENT - 5
+    TardisBarge:tardisRemoveArtronEnergy(ARTRONDIFF)
+
+
+    # ARTRONFINALAMOUNT = TARDIS:tardisArtronEnergy() - 75
+    # TardisBarge:tardisRemoveArtronEnergy(ARTRONFINALAMOUNT)
+
+
 
 } # END FUNCTION
 
@@ -418,6 +435,13 @@ function funcGPS()
 	{
     FINDGPS = findByClass("gmod_wire_gps")
 	if(FINDGPS > 0) {
+	
+	GPSFindAll = findSortByDistance(owner():pos())
+    GPSCount = findToArray():count()
+    RandomChoice = randint(1,GPSCount)
+    GPSLOCATION1 = findResult(RandomChoice)
+    GPSLOCATION2 = GPSLOCATION1:toWorld(vec(0,0,2)) # Add 2 to Z axis/height, to ensure TARDIS doesn't get stuck on GPS entity
+	
             if(TARDIS:tardisPowered()==0){
 				        TARDIS:tardisPower()
             }
@@ -430,12 +454,6 @@ function funcGPS()
             if(TARDIS:tardisLongflighted()==1){
 		              TARDIS:tardisLongflight()
             }
-    GPSFindAll = findSortByDistance(owner():pos())
-    GPSCount = findToArray():count()
-    RandomChoice = randint(1,GPSCount)
-    GPSLOCATION1 = findResult(RandomChoice)
-    GPSLOCATION2 = GPSLOCATION1:toWorld(vec(0,0,2)) # Add 2 to Z axis/height, to ensure TARDIS doesn't get stuck on GPS entity
-
             if(TARDIS:tardisInVortex()==1){
 					TARDIS:tardisSetDestination(GPSLOCATION2, ang(0,0,0))
 					TARDIS:tardisMaterialise()
@@ -453,7 +471,7 @@ function funcGPS()
 function funcStatus()
 	{
 		    if(TARDIS:tardisInVortex()==1){
-		              print("Location: Vortex")
+		              print("Location: -VORTEX-")
             }
             if(TARDIS:tardisInVortex()==0 & TARDIS:tardisMoving()==0){
 		              print("Location: Materialised at ",TARDIS:pos())
@@ -484,7 +502,7 @@ function funcStatus()
             }
             print("Health: ", TARDIS:tardisHealth())
 			print("Came from: ", TARDIS:tardisLastPos())
-			print("Size (ext): ", TARDIS:boxSize())
+			print("Size (exterior): ", TARDIS:boxSize())
 			
 			findByClass("gmod_tardis")
 			TardisCount = findToArray():count()
@@ -495,7 +513,7 @@ function funcStatus()
 function funcComeToMe()
 	{
             WHEREAMI = owner():pos()
-            NEARPLAYER = WHEREAMI + vec(-50,-50,0)
+            NEARPLAYER = WHEREAMI + vec(0,0,0)
     
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
@@ -521,24 +539,25 @@ function funcComeToMe()
             if(TARDIS:tardisInVortex()==0){
 			
 				if(TARDIS:tardisBraking()==1) {
-        
-					ARTRONFUEL = TARDIS:tardisArtronEnergy()
-					ARTRONREMAINING = TARDIS:tardisMaxArtronEnergy() - TARDIS:tardisArtronEnergy()
-					print("Fuel reserves: " + ARTRONFUEL)
+					
+					#ARTRONFUEL = TARDIS:tardisArtronEnergy()
+					#ARTRONREMAINING = TARDIS:tardisMaxArtronEnergy() - TARDIS:tardisArtronEnergy()
+					#print("Fuel reserves: " + ARTRONFUEL)
 			
-					if ((ARTRONFUEL < 5) & (ARTRONFUEL != 0)) {
+					if ((ARTRONFUEL < 6) & (ARTRONFUEL != 0)) {
 						print("Insufficient fuel for safe flight: " + ARTRONFUEL)
 					}
 			
-					elseif(ARTRONFUEL >= 5) {
+					elseif(ARTRONFUEL >= 6) {
 						TARDIS:tardisHandbrake()
 						print("Fuel reserves: " + ARTRONFUEL)
 						TARDIS:tardisDemat(NEARPLAYER,ang(0,0,0))
 					}
 				}
-    elseif(TARDIS:tardisBraking()==0) {
-        TARDIS:tardisDemat(NEARPLAYER,ang(0,0,0))     
-    }
+				
+				elseif(TARDIS:tardisBraking()==0) {
+					TARDIS:tardisDemat(NEARPLAYER,ang(0,0,0))     
+				}
 	}
 
 } # END FUNCTION
@@ -548,14 +567,15 @@ function funcComeToMe()
 
 
 
+
+if (TARDIS:isValid()) {
+
+
 ### TIMERS
 
 if(clk("EscapeFuncMakeSane")) {
 	TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
 }
-
-if (TARDIS:isValid()) {
-
 
 if(clk("deleteholo")) {
     holoDeleteAll()
@@ -565,6 +585,66 @@ if(clk("deleteholo")) {
 if(clk("playerdeath")) {
     funcPlayerDeath()
 }
+
+if(clk("bargeexplosion1")) {
+	BOOM1 = effect()
+	BOOM1:setDamageType(256)
+	BOOM1:setScale(100)
+	BOOM1:setMagnitude(150)
+	BOOM1:setRadius(600)
+	BOOM1:setOrigin(Position11)
+	BOOM1:play("Explosion")
+	
+	timer("bargeexplosion2",2000)
+}
+
+if(clk("bargeexplosion2")) {
+	BOOM2 = effect()
+	BOOM2:setDamageType(256)
+	BOOM2:setScale(100)
+	BOOM2:setMagnitude(150)
+	BOOM2:setRadius(600)
+	BOOM2:setOrigin(Position11)
+	BOOM2:play("Explosion")
+
+	timer("bargeexplosion3",2000)
+}
+
+if(clk("bargeexplosion3")) {
+	BOOM3 = effect()
+	BOOM3:setDamageType(256)
+	BOOM3:setScale(100)
+	BOOM3:setMagnitude(150)
+	BOOM3:setRadius(600)
+	BOOM3:setOrigin(Position11)
+	BOOM3:play("Explosion")
+	
+	timer("bargeexplosion4",2000)
+}
+
+if(clk("bargeexplosion4")) {
+	BOOM4 = effect()
+	BOOM4:setDamageType(256)
+	BOOM4:setScale(100)
+	BOOM4:setMagnitude(150)
+	BOOM4:setRadius(600)
+	BOOM4:setOrigin(Position11)
+	BOOM4:play("Explosion")
+	
+	timer("bargeexplosion5",2000)
+}
+
+if(clk("bargeexplosion5")) {
+	BOOM5 = effect()
+	BOOM5:setDamageType(256)
+	BOOM5:setScale(100)
+	BOOM5:setMagnitude(150)
+	BOOM5:setRadius(600)
+	BOOM5:setOrigin(Position11)
+	BOOM5:play("Explosion")
+}
+
+
 
 
 ### WIRE BUTTONS
@@ -750,18 +830,3 @@ elseif (TARDIS:isValid() == 0) {
 	print("First wire the E2 chip to TARDIS")
 
 }
-
-
-A += 10
-
-holoPos(1,Position1B+vec(0,cos(A)*B1,sin(A)*B1))
-holoPos(2,Position1B+vec(-cos(A)*B1,sin(A)*B1,cos(A)*B1))
-holoPos(3,Position1B+vec(cos(A)*B1,sin(A)*B1,cos(A)*B1))
-holoPos(4,Position1B+vec(0,cos(A)*B2,sin(A)*B2))
-holoPos(5,Position1B+vec(-cos(A)*B2,sin(A)*B2,cos(A)*B2))
-holoPos(6,Position1B+vec(cos(A)*B2,sin(A)*B2,cos(A)*B2))
-holoPos(7,Position1B+vec(0,cos(A)*B3,sin(A)*B3))
-holoPos(8,Position1B+vec(-cos(A)*B3,sin(A)*B3,cos(A)*B3))
-holoPos(9,Position1B+vec(cos(A)*B3,sin(A)*B3,cos(A)*B3))
-
-

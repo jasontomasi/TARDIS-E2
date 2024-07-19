@@ -1,6 +1,6 @@
 @name TARDIS Barge
-@inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS
-@persist [TARDIS TARDISINTERIOR]:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number ARTRONFUEL
+@inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS FLIGHT DRIFT
+@persist [TARDIS TARDISINTERIOR]:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector Position2:vector Position3:vector Position4:vector Position5:vector CORNER1:vector CORNER2:vector Position1B:vector Position10:vector Position11:vector Position12:vector DeathRescue:number ARTRONFUEL Mass RPM Veloc SPINTARDIS
 
 
 #ifdef entity:plySpawn()
@@ -33,6 +33,14 @@
         timer("playerdeath", 7000)
     }
 
+	if(SPINTARDIS == 1) {
+		interval(250)
+		TARDIS:applyAngForce(ang(0,Mass*800,0))
+	}
+	if(SPINTARDIS == 0) {
+		interval(0)
+		runOnChat(1)
+	}
 
 if(first() | dupefinished()) {
 
@@ -42,7 +50,10 @@ if(first() | dupefinished()) {
     TARDISINTERIOR = entity():isConstrainedTo()
     TARDIS:createWire(entity(),"XYZ", "XYZ")
 
-DeathRescue = 0
+	Mass = TARDIS:mass()
+	DeathRescue = 0
+	SPINTARDIS = 0
+
 
 
 function funcPlayerDeath() {
@@ -93,12 +104,17 @@ function makeItPretty(Index:number, Model:string, Where:vector, Angle:angle, Siz
     holoMaterial(Index,Skin)
     HOLONUMBER = HOLONUMBER + 1
 
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcBarge()
 	{
 	
+	if(TARDIS:tardisHealth() == 0){
+		print("ERROR: TARDIS damaged.")
+		return
+	}
+
 	if(TARDIS:tardisPowered()==0){
 		TARDIS:tardisPower()
     }
@@ -111,7 +127,7 @@ function funcBarge()
 	if(TARDIS:tardisLongflighted()==1){
 		TARDIS:tardisLongflight()
 	}
-	
+
     #OWNER=TARDIS:owner()
 
     OURSELVES=entity():isConstrainedTo()
@@ -123,7 +139,7 @@ function funcBarge()
     TardisCount = findToArray():count()
     RandomChoice = randint(1,TardisCount)
     TardisBarge = findResult(RandomChoice)
-    
+   
     Position0 = TardisBarge:toWorld(vec())
     Position1 = TardisBarge:toWorld(vec(randint(50,70), randint(50,70), 0))
     Position1B = Position1 + vec(0,0,50)
@@ -136,37 +152,37 @@ function funcBarge()
     Position10 = TardisBarge:toWorld(vec(0,0,20))
     Position11 = TardisBarge:toWorld(vec(0,0,40))
     Position12 = TardisBarge:toWorld(vec(0,0,80))
-    
+   
     #CORNER1 = TardisBarge:boxMax()
     #CORNER2 = TardisBarge:boxMin()
     #Position22 = Position0 +vec(randvec(CORNER1,CORNER2))
-    
+   
     SIZEEXTERIOR = TARDIS:getModelScale()  # Get scale of our exterior shell
 
-print(TardisBarge:boxMax():x())
-print(TardisBarge:boxMax():y())
-print(TardisBarge:boxMax():z())
+# print(TardisBarge:boxMax():x())
+# print(TardisBarge:boxMax():y())
+# print(TardisBarge:boxMax():z())
 
-print(TardisBarge:boxMin():x())
-print(TardisBarge:boxMin():y())
-print(TardisBarge:boxMin():z())
+# print(TardisBarge:boxMin():x())
+# print(TardisBarge:boxMin():y())
+# print(TardisBarge:boxMin():z())
 
-print(TARDIS:boxMax():x())
-print(TARDIS:boxMax():y())
-print(TARDIS:boxMax():z())
+# print(TARDIS:boxMax():x())
+# print(TARDIS:boxMax():y())
+# print(TARDIS:boxMax():z())
 
-print(TARDIS:boxMin():x())
-print(TARDIS:boxMin():y())
-print(TARDIS:boxMin():z())
+# print(TARDIS:boxMin():x())
+# print(TARDIS:boxMin():y())
+# print(TARDIS:boxMin():z())
 
 
-print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
+# print("TARDIS located at: " + Position1 + " owned by " + TardisBarge:owner())
 
-            if(TARDIS:tardisHealth() >= 20) {
+            if(TARDIS:tardisHealth() >= 11) {
 			HEALTHY = 1
             }
 
-            if(TARDIS:tardisHealth() <= 20) {
+            if(TARDIS:tardisHealth() < 11) {
 			HEALTHY = 0
             }
 
@@ -200,7 +216,7 @@ print("TARDIS located at ", Position1, " owned by ", TardisBarge:owner())
     #makeItPretty(2,"models/effects/splodearc.mdl",Position3,ang(0,0,0),vec(1,1,1),"")
     #makeItPretty(3,"models/effects/splodearc.mdl",Position4,ang(0,0,0),vec(1,1,1),"")
     #makeItPretty(4,"models/effects/splodearc.mdl",Position5,ang(0,0,0),vec(1,1,1),"")
-    makeItPretty(10,"hqsphere",Position1+vec(0,0,50),ang(0,0,0),vec(8,8,8),"models/props_combine/com_shield001a")
+    makeItPretty(10,"hqsphere",Position1+vec(0,0,50),ang(0,0,0),vec(14,14,14),"models/props_combine/com_shield001a")
 
 
 # D = holoCreate(1,Position0+vec(0,0,85),vec(0.5),ang(0),vec(255,255,255),"hq_sphere")
@@ -283,7 +299,74 @@ function funcTargetPlayer(ARGUMENT1:string)
 		else {
             print("Unable to target this person!")
         }
-	} # END FUNCTION
+} # END FUNCTION
+
+
+
+function funcFlight() {
+
+	if(TARDIS:tardisFlying()==0) {
+		FlightOnSuccess = TARDIS:tardisFlightmode()
+		if (FlightOnSuccess==1) {
+			print("Flight mode: Enabled")
+		}
+		elseif (FlightOnSuccess==0) {
+			print("Flight mode: *FAILED*")
+		}
+    }
+	elseif(TARDIS:tardisFlying()==1) {
+	FlightOffSuccess = TARDIS:tardisFlightmode()
+	
+		if (FlightOffSuccess==1) {
+			print("Flight mode: Disabled")
+		}
+		elseif (FlightOffSuccess==0) {
+			print("Flight mode: *FAILED*")
+		}
+    }
+} # END FUNCTION
+
+
+
+function funcDrift()
+	{
+
+	if(SPINTARDIS==0) {
+		SPINTARDIS = 1
+		print("Drift mode: Enabled")
+    }
+	elseif(SPINTARDIS==1) {
+		SPINTARDIS = 0
+		print("Drift mode: Disabled")
+    }
+
+	if((TARDIS:tardisHealth() > 0) & (TARDIS:tardisArtronEnergy() >= 10) & (SPINTARDIS==1)) {
+
+		interval(250)
+
+            if(TARDIS:tardisPowered() == 0) {
+		        TARDIS:tardisPower()
+            }
+			if(TARDIS:tardisBraking() == 1) {
+		        TARDIS:tardisHandbrake()
+            }
+			if(TARDIS:tardisOpened() == 1) {
+		        TARDIS:tardisDoor()
+            }
+			if(TARDIS:tardisFlying() == 0) {
+				TARDIS:tardisFlightmode()
+			}
+			if(TARDIS:tardisPhyslocked() == 1) {
+		        TARDIS:tardisPhyslock()
+            }
+			if(TARDIS:tardisMoving() == 1) {
+				print("TARDIS already moving. Cannot drift.")
+			}
+
+			timer("TARDISdrift1",10000)
+
+	}
+} # END FUNCTION
 
 
 function funcEscape()
@@ -312,7 +395,7 @@ function funcEscape()
 			timer("EscapeFuncMakeSane",6000)
 			
 	}
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcLockdoor()
@@ -328,13 +411,13 @@ function funcLockdoor()
 		              TARDIS:tardisLock()
 					  print("Door unlocked")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcPhyslock()
 	{
 		              TARDIS:tardisPhyslock()
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcMaterialise()
@@ -342,7 +425,7 @@ function funcMaterialise()
             if(TARDIS:tardisInVortex()==1){
 			TARDIS:tardisMaterialise()
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcHealth()
@@ -354,7 +437,7 @@ function funcHealth()
 			print("* WARNING *")
 			print("Health: " +TARDIS:tardisHealth() + "%")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcHADS()
@@ -369,7 +452,7 @@ function funcHADS()
             elseif(TARDIS:tardisIsHADS()==0){
 		              print("HADS: OFF")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcHandbrake()
@@ -381,7 +464,7 @@ function funcHandbrake()
             elseif(TARDIS:tardisBraking()==0){
 		              print("Handbrake: OFF")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcSneak()
@@ -396,7 +479,7 @@ function funcSneak()
             elseif(TARDIS:tardisVisible()==0){
 		              print("Cloak: ON")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcRepair()
@@ -405,7 +488,7 @@ function funcRepair()
 		    TARDIS:tardisPower()
             }
 		    TARDIS:tardisSelfrepair()
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcWhere()
@@ -419,7 +502,7 @@ function funcWhere()
             if(TARDIS:tardisMoving()==1){
 		    print("Location: - DEMAT/REMAT -")
             }
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcReturn()
@@ -428,7 +511,7 @@ function funcReturn()
 		    TARDIS:tardisPower()
             }
             TARDIS:tardisFastReturn()
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcGPS()
@@ -465,7 +548,7 @@ function funcGPS()
 	else {
 			print("Can't find GPS to lock on to.")
 		}
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcStatus()
@@ -507,7 +590,7 @@ function funcStatus()
 			findByClass("gmod_tardis")
 			TardisCount = findToArray():count()
 			print("TARDISes in universe: ", TardisCount)
-	} # END FUNCTION
+} # END FUNCTION
 
 
 function funcComeToMe()
@@ -572,6 +655,29 @@ if (TARDIS:isValid()) {
 
 
 ### TIMERS
+
+if(clk("TARDISdrift1")) {
+	if( (TARDIS:tardisPowered() == 0) | (TARDIS:tardisArtronEnergy() <= 6) ) {
+		SPINTARDIS = 0
+		interval(0)
+		runOnChat(1)
+
+		if(TARDIS:tardisFlying() == 1) {
+			TARDIS:tardisFlightmode()
+		}
+	}
+	if( (TARDIS:tardisPowered() == 1) & (TARDIS:tardisArtronEnergy() > 6) & (SPINTARDIS == 1)) {
+
+		if(TARDIS:tardisInVortex() == 1) {
+		TARDIS:tardisSetDestination(NEARSUBJECT, ang(0,0,0))
+		TARDIS:tardisMaterialise()
+		}
+		if(TARDIS:tardisInVortex() == 0) {
+		TARDIS:tardisFastDemat()
+		}
+	timer("TARDISdrift1",10000)
+	}
+}
 
 if(clk("EscapeFuncMakeSane")) {
 	TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
@@ -709,6 +815,14 @@ if (COMETOME&~COMETOME) {
 	funcComeToMe()
 }
 
+if (DRIFT&~DRIFT) {
+	funcDrift()
+}
+
+if (FLIGHT&~FLIGHT) {
+	funcFlight()
+}
+
 
 
 ### Script for monitoring chat commands
@@ -719,7 +833,12 @@ if(chatClk(owner())) {
     ARGUMENT1 = LastSaid[2,string]
 
 
-if(COMMAND=="!barge") {
+if(COMMAND=="!drift") {
+    hideChat(1)
+	funcDrift()
+}
+
+elseif(COMMAND=="!barge") {
     hideChat(1)
 	funcBarge()
 }
@@ -804,6 +923,11 @@ elseif(COMMAND=="!go") {
 	hideChat(1)
 	funcTargetPlayer(ARGUMENT1)
     }
+    }
+
+elseif(COMMAND=="!fly") {
+    hideChat(1)
+	funcFlight()
     }
 
 elseif(COMMAND=="!death") {

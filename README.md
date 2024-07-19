@@ -124,6 +124,12 @@ Targets a random wiremod GPS, travels to it, and materialises on it
 **!death**
 When player dies, TARDIS will mat at player's spawn location
 
+**!fly**
+Toggles Flight mode on and off
+
+**!drift**
+(Testing) Just making this as a demat/mat loop, to deliberately waste fuel
+
 
 ----------------------------------
 

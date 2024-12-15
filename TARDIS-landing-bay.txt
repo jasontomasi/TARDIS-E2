@@ -304,9 +304,9 @@ Index++
 }
 
 
-if (TargetTardis:tardisHealth() == 0 ) {
+if (TargetTardis:tardisHealth() <= 10 ) {
     
-	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
+	print("Repairing damaged TARDIS",Index,"@",TargetTardis:pos())
  
     if(TargetTardis:tardisSelfrepairing()==0) {
 		TargetTardis:tardisSelfrepair()

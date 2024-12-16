@@ -20,17 +20,18 @@ Hologram colors:
 
 - **BLUE**: Materialised
 
-- **RED**: Low health 
+- **RED**: Low health / damaged
 
 
 ---
 
 
 # TARDIS-landing-bay
-This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control other TARDISes on the map by making them to materialise on the 'landing bays' (wiremod GPS chips)
+This E2 simulates a TARDIS/SIDRAT landing bay, and allows you to control all TARDISes on the map by making them to materialise on the 'landing bays' (wiremod GPS chips)
 
 
 ### Instructions:
+- In multiplayer, the functionality will depend on prop protection permissions
 - Manually spawn enough wiremod GPS entities near the E2 chip (one GPS for each TARDIS on the map)
 - Issue commands to the E2 by using chat
 **OR**

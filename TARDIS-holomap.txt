@@ -108,20 +108,20 @@ foreach(Index,TargetTardis:entity = Tardises) {
 	holoAlpha(Index, 255)
 	# models/the_sniper_9/doctorwho/tardis/tardis.mdl, models/the_sniper_9/doctorwho/tardis/tardis.mdl, models/emrys/tardis/evildan/edwardian_box.mdl
 	# holoMaterial(Index, "models/wireframe")
-	holoAng(Index,TargetTardis:angles())
+	#holoAng(Index,TargetTardis:angles())
 
 
 if (TargetTardis:tardisHealth() < 20) {
     holoColor(Index, vec(255,0,0))
 
-			if (holoEntity(Index+20):isValid()) {
+			if (!holoEntity(Index+20):isValid()) {
     		# Draw extra circle around damaged TARDISes, with an ID of Index+20
                     holoCreate(Index+20, holoEntity(Index):pos() + vec(0,0,5))
                     holoParent(Index+20, holoEntity(Index))
                     holoModel(Index+20, "sphere3")
                     holoScale(Index+20, vec(1.25,1.25,1.25))
                     holoColor(Index+20, vec(255,0,0))
-                    holoAlpha(Index+20, 128)
+                    #holoAlpha(Index+20, 128)
                     holoMaterial(Index+20, "models/alyx/emptool_glow")
                     holoAng(Index+20, holoEntity(Index):angles())
     }
@@ -157,7 +157,7 @@ if (TargetTardis:tardisInVortex() == 1) {
         }
     else{
     holoAng(Index, ang(randint(-30,30),randint(-30,30),randint(-30,30)))
-    #holoColor(Index, vec(161,255,255))
+    holoColor(Index, vec(255,255,255))
     #holoAlpha(Index, 128)
     }
 
@@ -170,6 +170,7 @@ if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() < 20)) {
     holoColor(Index, vec(255,0,0))
     # Get position of target, localize it relative to E2, and scale down vec(100,100,50). Bigger numbers = smaller holo
     holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(200,200,100)) + vec(0,0,0) )
+	holoAng(Index, ang(0,0,0))
 }
 
 if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() >= 20)) {
@@ -178,6 +179,7 @@ if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() >= 20)) 
     holoColor(Index, vec(61,255,255))
     # Get position of target, localize it relative to E2, and scale down vec(100,100,50). Bigger numbers = smaller holo
     holoPos(Index, (entity():pos() + entity():toLocal(TargetTardis:pos()) / vec(200,200,100)) + vec(0,0,0) )
+	holoAng(Index, ang(0,0,0))
 }
 
 if (TargetTardis:tardisMoving() == 1) {

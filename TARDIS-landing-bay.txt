@@ -3,70 +3,7 @@
 @persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2POS1:vector E2POS2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector LandingBayGPS:string Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector TargetTARDIS:entity
 
 runOnChat(1)
-interval(200)
-
-    Timer += 30
-    Cring = 0.05 + (sin(Timer+50) * 13)
-    Cring2 = 0.05 + (sin(Timer+60) * 30)
-    Cur = curtime()
-
-E2POS1 = entity():toWorld(vec(0,0,8))
-E2POS2 = entity():toWorld(vec(0,0,45))
-
-#holoAng(90, entity():angles())
-#holoAng(95, entity():angles())
-#holoAng(96, entity():angles())
-#holoAng(97, entity():angles())
-#holoAng(98, entity():angles())
-
-if (SEQ1 == 1) {
-        # TIME ROTOR ASC/DESC DURING SEQ
-        holoPos(95, entity():pos() + vec(0,0,-25) - vec(0,0,Cring))
-        holoMaterial(95, "models/alyx/emptool_glow")
-		
-		# PYRAMID ROTATES FASTER DURING SEQ
-        #holoMaterial(97, "debug/env_cubemap_model")
-        holoColor(97, vec(255,255,255), 0)
-        #holoAng(97, ang(0, 0, -180))
-        
-        #SPHERE
-        holoAng(98, ang(0, Cur * 70, 180))
-        
-        #ATTACHMENT
-        holoAng(90, ang(0, Cur * 25, 0))
-        
-        #CONSOLE
-        #holoAng(96, ang(0, Cur * -40, 0))
-        
-        #holoAng(95, entity():angles())
-        # CIRCLE COLOUR
-        #holoColor(98, vec(51,153,255))
-        # ROTOR
-        holoColor(95, vec(255,191,10)) #GOLD
-
-    for (I = 200, 250) {
-        holoPos(I, holoEntity(I):pos() - vec(0,0,Cring2))
-    }
-        
-    
-}
-
-if (SEQ1 == 0) {
-		      # TIME ROTOR IDLE POS
-        #holoPos(95, E2POS1 + vec(0,0,-25) - vec(0,0,Cring))
-	       holoMaterial(95, "")
-        #holoPos(95, entity():pos() + vec(0,0,-50))
-        
-        # PYRAMID ROTATES CONTINUOUSLY
-        #holoMaterial(97, "")
-        #holoAng(97, ang(0, Cur * 30, -180))
-        holoAng(97, ang(0, 0, -180))
-        holoColor(97, vec(0,0,0), 255)
-        holoColor(95, vec(127,159,255))
-		      #holoAng(97, ang(0, Cur * 20, -180))
-        # CIRCLE COLOUR
-        holoColor(98, vec(255,70,255))
-}
+interval(100)
 
 
 if(first()){
@@ -95,10 +32,6 @@ concmd("wire_expression2_quotasoft 500000")
 # ORANGE (255, 93, 0)
 # PURPLE (255,70,255)
 
-	#R = R + 100 * 5
-	#R2 = R2 + 150 * 5
-	#R3 = R3 + 200 * 5
-
     # propSpawn("models/maxofs2d/hover_rings.mdl", entity():pos() + vec(0,0,120), ang(0,0,0), 1)
     # propSpawn("models/doctorwho1200/hellbent/console.mdl", entity():pos(), entity():angles(), 0)
 
@@ -108,26 +41,28 @@ concmd("wire_expression2_quotasoft 500000")
     #E2 = entity():pos() + vec(0,0,8)  #original Z axis offset 45
     E2POS1 = entity():toWorld(vec(0,0,8))
 
+
 	# CENTRAL SPHERE
     holoCreate(98)
     holoParent(98, entity())
-    holoPos(98, E2POS1 + vec(0,0,400))  #holoPos(98, E2POS1 + vec(0,0,450))
-    holoMaterial(98, "models/props_combine/stasisfield_beam")
-    holoModel(98, "models/maxofs2d/hover_rings.mdl")
+    holoPos(98, E2POS1 + vec(0,0,200))  #holoPos(98, E2POS1 + vec(0,0,450))
+    #holoMaterial(98, "debug/env_cubemap_model")
+    holoModel(98, "icosphere")
     #holoColor(98, vec(255,0,255)) # GREEN vec(0,255,0)
     #holoColor(98, vec(255,70,255))
-    holoScaleUnits(98, vec(190,190,190))  # 190
+    holoScale(98, vec(5,5,5))  # 190
     holoRenderFX(98, 0)
+	holoShadow(98, 1)
 
  # PYRAMID
-    holoCreate(97)
-    holoParent(97, entity())
-    holoPos(97, E2POS1 + vec(0,0,330))
-    holoMaterial(97, "debug/env_cubemap_model")
-    holoModel(97, "pyramid")
-    holoColor(97, vec(0,0,0))
-    holoScaleUnits(97, vec(200,200,200))
-    holoAng(97, entity():angles() + ang(0,0,-180))
+    #holoCreate(97)
+    #holoParent(97, entity())
+    #holoPos(97, E2POS1 + vec(0,0,330))
+    #holoMaterial(97, "debug/env_cubemap_model")
+    #holoModel(97, "pyramid")
+    #holoColor(97, vec(0,0,0))
+    #holoScaleUnits(97, vec(200,200,200))
+    #holoAng(97, entity():angles() + ang(0,0,-180))
     #holoAlpha(97, 200)
 
  # CONSOLE
@@ -143,18 +78,18 @@ concmd("wire_expression2_quotasoft 500000")
     holoParent(95, entity())
     holoPos(95, E2POS1 + vec(0,0,-40)) # 20 above
     holoModel(95, "models/artixc/mcgannr/rotor.mdl")  # models/doctormemes/newbarp/rotor.mdl
-    #holoMaterial(95, "models/alyx/emptool_glow")
-    holoColor(95, vec(127,159,255))  #(109,109,109))
+    holoMaterial(95, "models/alyx/emptool_glow")
+    holoColor(95, vec(255,255,255))  #(109,109,109))
     holoAng(95, entity():angles())
 
  # CONSOLE ATTACHMENT
-    holoCreate(90)
-    holoParent(90, entity())
-    holoPos(90, entity():pos())
-    holoModel(90, "models/artixc/mcgannr/console_gutters.mdl")
+    #holoCreate(90)
+    #holoParent(90, entity())
+    #holoPos(90, entity():pos())
+    #holoModel(90, "models/artixc/mcgannr/console_gutters.mdl")
     #holoMaterial(90, "models/alyx/emptool_glow")
     #holoColor(90, vec(255,223,127))
-    holoAng(90, entity():angles())
+    #holoAng(90, entity():angles())
 
  # TIME ROTOR ILLUMINATION
     #lightCreate(1)
@@ -256,7 +191,7 @@ LandingBayClearance = rangerOffsetHull(TargetTardis:boxSize():z(), ChosenGPS:toW
 
 # DRAW LINES BETWEEN E2 AND LANDING BAYS
 
-LandingBayDifference = ChosenGPS:pos() - E2POS2						#Subtract them to make a direction
+LandingBayDifference = ChosenGPS:pos() - E2POS1						#Subtract them to make a direction
 LandingBayDistance = LandingBayDifference:length()							#Gets the LandingBayDistanceance (its the same as ChosenGPS:pos():LandingBayDistanceance(E2POS2))
 LandingBayHoloAngle = LandingBayDifference:toAngle() + ang(90,0,0)
 
@@ -264,7 +199,7 @@ LandingBayHoloAngle = LandingBayDifference:toAngle() + ang(90,0,0)
 holoCreate(Index+40)
 holoModel(Index+40, "cylinder")
 #holoAlpha(Index+40, 100)
-holoPos(Index+40, (ChosenGPS:pos() + E2POS2) / 2)
+holoPos(Index+40, (ChosenGPS:pos() + E2POS1) / 2)
 holoAng(Index+40, LandingBayHoloAngle)			#Angle it. adding 90 to pitch because it is a cylinder, so I want to scale its Z, not its X.
 holoScale(Index+40, vec(6,6,LandingBayDistance) / 12)					#Scale it to make it as long as the LandingBayDistanceance.
 holoMaterial(Index+40, "models/alyx/emptool_glow")    # models/props_combine/cit_beacon, models/alyx/emptool_glow, models/props_combine/portalball001_sheet, Models/props_combine/masterinterface01c
@@ -304,9 +239,9 @@ Index++
 }
 
 
-if (TargetTardis:tardisHealth() <= 10 ) {
+if (TargetTardis:tardisHealth() == 0 ) {
     
-	print("Repairing damaged TARDIS",Index,"@",TargetTardis:pos())
+	print("TARDIS",Index,"DAMAGED @",TargetTardis:pos())
  
     if(TargetTardis:tardisSelfrepairing()==0) {
 		TargetTardis:tardisSelfrepair()
@@ -350,13 +285,13 @@ foreach(Index,TargetTardis:entity = Tardises) {
 
 
  # TORUS RINGS ON EACH BAY
-    holoCreate(Index+200)
-    holoPos(Index+200, TargetGPS + vec(0,0,40))
-    holoAng(Index+200, ChosenGPS:angles())
-    holoScaleUnits(Index+200, vec(TargetTardis:boxSize():x()+35, TargetTardis:boxSize():y()+35, 40))
-    holoModel(Index+200, "hq_torus_thin")  # hq_torus_thin, 
-    #holoMaterial(Index+200, "models/props_combine/stasisfield_beam")
-    holoColor(Index+200, vec(250,0,0), 200)
+#    holoCreate(Index+200)
+#    holoPos(Index+200, TargetGPS + vec(0,0,40))
+#    holoAng(Index+200, ChosenGPS:angles())
+#    holoScaleUnits(Index+200, vec(TargetTardis:boxSize():x()+35, TargetTardis:boxSize():y()+35, 40))
+#    holoModel(Index+200, "hq_torus_thin")  # hq_torus_thin, 
+#    #holoMaterial(Index+200, "models/props_combine/stasisfield_beam")
+#    holoColor(Index+200, vec(250,0,0), 200)
 
 
 
@@ -697,3 +632,77 @@ if(clk("arrivalchecks")) {
 }
 
 
+
+E2POS1 = entity():toWorld(vec(0,0,8))
+E2POS2 = entity():toWorld(vec(0,0,45))
+
+
+#holoAng(90, entity():angles())
+#holoAng(95, entity():angles())
+#holoAng(96, entity():angles())
+#holoAng(97, entity():angles())
+#holoAng(98, entity():angles())
+
+if (SEQ1 == 1) {
+
+    Timer += 30
+    Cring = 0.05 + (sin(Timer+50) * 13)
+    #Cring2 = 0.05 + (sin(Timer+60) * 30)
+    Cur = curtime()
+
+        # TIME ROTOR ASC/DESC DURING SEQ
+        holoPos(95, entity():pos() + vec(0,0,-25) - vec(0,0,Cring))
+        holoMaterial(95, "models/alyx/emptool_glow")
+        #holoColor(95, hsv2rgb(sin(curtime()*40)*-255,1,1))
+		holoColor(95, vec(33,255,0))
+
+		# PYRAMID ROTATES FASTER DURING SEQ
+        #holoMaterial(97, "debug/env_cubemap_model")
+        #holoColor(97, vec(255,255,255), 0)
+        #holoAng(97, ang(0, 0, -180))
+        
+        #SPHERE
+        #holoAng(98, ang(0, Cur * 70, 180))
+        holoAng(98, holoEntity(98):angles() + ang(vec(0,24/0.75,0)))
+		
+        #ATTACHMENT
+        #holoAng(90, ang(0, Cur * 25, 0))
+        
+        #CONSOLE
+        #holoAng(96, ang(0, Cur * -40, 0))
+        
+        #holoAng(95, entity():angles())
+        # SPHERE COLOUR
+        #holoColor(98, vec(51,153,255))
+        # ROTOR
+        #holoColor(95, vec(33,255,0)) #GOLD vec(255,191,10)
+
+	# TORUS rings up and down
+    #for (I = 200, 250) {
+    #    holoPos(I, holoEntity(I):pos() - vec(0,0,Cring2))
+    #}
+
+
+}
+
+if (SEQ1 == 0) {
+
+		# TIME ROTOR IDLE POS
+		holoColor(95, vec(255,255,255))
+        #holoPos(95, E2POS1 + vec(0,0,-25) - vec(0,0,Cring))
+	    #holoMaterial(95, "")
+        #holoPos(95, entity():pos() + vec(0,0,-50))
+		#holoAng(95, holoEntity(95):angles() + ang(vec(0, 3/0.75, 0)))
+		
+        # PYRAMID ROTATES CONTINUOUSLY
+        #holoMaterial(97, "")
+        #holoAng(97, ang(0, Cur * 30, -180))
+        #holoAng(97, ang(0, 0, -180))
+        #holoColor(97, vec(0,0,0), 255)
+        holoColor(97, vec(255,255,255))
+		#holoAng(97, ang(0, Cur * 20, -180))
+        
+		# SPHERE COLOUR
+        #holoColor(98, vec(255,70,255))
+		holoAng(98, holoEntity(98):angles() + ang(vec(0,2/0.75,0)))
+}

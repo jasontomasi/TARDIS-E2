@@ -39,6 +39,7 @@ concmd("wire_expression2_quotasoft 500000")
 
     SEQ1 = 0
     #E2 = entity():pos() + vec(0,0,8)  #original Z axis offset 45
+    E2POS = entity():pos()
     E2POS1 = entity():toWorld(vec(0,0,8))
 
 
@@ -76,9 +77,9 @@ concmd("wire_expression2_quotasoft 500000")
  # TIME ROTOR
     holoCreate(95)
     holoParent(95, entity())
-    holoPos(95, E2POS1 + vec(0,0,-40)) # 20 above
+    holoPos(95, E2POS + vec(0,0,-15)) # 20 above
     holoModel(95, "models/artixc/mcgannr/rotor.mdl")  # models/doctormemes/newbarp/rotor.mdl
-    holoMaterial(95, "models/alyx/emptool_glow")
+    #holoMaterial(95, "models/alyx/emptool_glow")
     holoColor(95, vec(255,255,255))  #(109,109,109))
     holoAng(95, entity():angles())
 
@@ -494,8 +495,9 @@ if(clk("TimerOne")) {
     holoPos(93, (holoEntity(98):pos() + E2POS2) / 2)
     holoAng(93, CircleHoloAngle)
     holoScale(93, vec(4,4,CircleDistance) / 12)
-    holoMaterial(93, "models/props_combine/tpballglow")
-    holoColor(93, vec(255,0,0), 255)  # vec(0,213,255), 255)
+    # holoMaterial(93, "models/props_combine/tpballglow") looks good RED
+    holoMaterial(93, "models/alyx/emptool_glow")
+    holoColor(93, vec(255,255,255), 255)  # vec(0,213,255), 255)
     
     # vec(255,132,0 # ORANGE
     
@@ -654,7 +656,7 @@ if (SEQ1 == 1) {
         holoPos(95, entity():pos() + vec(0,0,-25) - vec(0,0,Cring))
         holoMaterial(95, "models/alyx/emptool_glow")
         #holoColor(95, hsv2rgb(sin(curtime()*40)*-255,1,1))
-		holoColor(95, vec(33,255,0))
+        holoColor(95, vec(255,255,255))
 
 		# PYRAMID ROTATES FASTER DURING SEQ
         #holoMaterial(97, "debug/env_cubemap_model")
@@ -690,9 +692,9 @@ if (SEQ1 == 0) {
 		# TIME ROTOR IDLE POS
 		holoColor(95, vec(255,255,255))
         #holoPos(95, E2POS1 + vec(0,0,-25) - vec(0,0,Cring))
-	    #holoMaterial(95, "")
+	    holoMaterial(95, "")
         #holoPos(95, entity():pos() + vec(0,0,-50))
-		#holoAng(95, holoEntity(95):angles() + ang(vec(0, 3/0.75, 0)))
+    	#holoAng(95, holoEntity(95):angles() + ang(vec(0, 3/0.75, 0)))
 		
         # PYRAMID ROTATES CONTINUOUSLY
         #holoMaterial(97, "")

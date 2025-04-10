@@ -1,6 +1,6 @@
 @name TARDIS Barge
 @inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS FLIGHT DRIFT
-@persist TARDIS:entity TARDISINTERIOR:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector CORNER1:vector CORNER2:vector Position1B:vector DeathRescue:number ARTRONFUEL Mass RPM Veloc DRIFTSPIN FuelPercent
+@persist TARDIS:entity TARDISINTERIOR:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector CORNER1:vector CORNER2:vector Position1B:vector DeathRescue:number ARTRONFUEL Mass RPM Veloc DRIFTSPIN FuelPercent TravelDistance
 
 
 #ifdef entity:plySpawn()
@@ -386,7 +386,10 @@ function funcEscape()
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
-            if(TARDIS:tardisOpened()==0){
+			if(TARDIS:tardisBraking()==1){
+		              TARDIS:tardisHandbrake()
+            }
+            if(TARDIS:tardisOpened()==1){
 		              TARDIS:tardisDoor()
             }
             if(TARDIS:tardisLongflighted()==0){
@@ -394,9 +397,6 @@ function funcEscape()
 	           }
             if(TARDIS:tardisIsomorphic()==0){
 		              TARDIS:tardisIsomorph()
-            }
-            if(TARDIS:tardisBraking()==1){
-		              TARDIS:tardisHandbrake()
             }
 
 			TARDIS:tardisDemat(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
@@ -442,7 +442,7 @@ function funcHealth()
             if(TARDIS:tardisHealth() > 20){
 			print("Health: " +TARDIS:tardisHealth() + "%")
             }
-            elseif(TARDIS:tardisHealth() < 20){
+            elseif(TARDIS:tardisHealth() <= 20){
 			print("* WARNING *")
 			print("Health: " +TARDIS:tardisHealth() + "%")
             }
@@ -553,6 +553,49 @@ function funcGPS()
             if(TARDIS:tardisInVortex()==0){
 		              TARDIS:tardisDemat(GPSLOCATION2, ang(0,0,0))
             }
+	}
+	else {
+			print("Can't find GPS to lock on to.")
+		}
+} # END FUNCTION
+
+
+function funcGPS2()
+	{
+    FINDGPS = findByClass("gmod_wire_gps")
+	if(FINDGPS > 0) {
+	
+	GPSFindAll = findSortByDistance(owner():pos())
+    GPSCount = findToArray():count()
+    RandomChoice = randint(1,GPSCount)
+    GPSLOCATION1 = findResult(RandomChoice)
+    GPSLOCATION2 = GPSLOCATION1:toWorld(vec(0,0,2)) # Add 2 to Z axis/height, to ensure TARDIS doesn't get stuck on GPS entity
+	
+            if(TARDIS:tardisPowered()==0){
+				        TARDIS:tardisPower()
+            }
+            if(TARDIS:tardisOpened()==1){
+		              TARDIS:tardisDoor()
+            }
+            if(TARDIS:tardisPhyslocked()==0){
+		          TARDIS:tardisPhyslock()
+            }
+            if(TARDIS:tardisLongflighted()==0){
+		              TARDIS:tardisLongflight()
+            }
+			if(TARDIS:tardisInVortex()==0){
+			TARDIS:tardisDemat(GPSLOCATION2, ang(0,0,0))
+			}
+			TARDIS:tardisSetDestination(GPSLOCATION2, ang(0,0,0))
+
+		TravelDistCalc = GPSLOCATION2 - TARDIS:pos()						#Subtract them to make a direction
+		TravelDistance = TravelDistCalc:length()
+		TravelDistIncr = TravelDistance * 2 + 30000
+
+	print("Plotting path to ", GPSLOCATION2)
+	print("Arrival ETA is", TravelDistIncr)
+
+	timer("TARDISdrift2", TravelDistIncr)
 	}
 	else {
 			print("Can't find GPS to lock on to.")
@@ -687,6 +730,12 @@ if(clk("TARDISdrift1")) {
 	}
 }
 
+if(clk("TARDISdrift2")) {
+    if(TARDIS:tardisInVortex()==1){
+			TARDIS:tardisMaterialise()
+    }
+}
+			
 if(clk("EscapeFuncMakeSane")) {
 	TARDIS:tardisSetDestination(TARDIS:tardisLastPos(), TARDIS:tardisLastAng())
 }
@@ -913,6 +962,11 @@ elseif(COMMAND=="!return") {
 elseif(COMMAND=="!gps") {
     hideChat(1)
 	funcGPS()
+	}
+
+elseif(COMMAND=="!gps2") {
+    hideChat(1)
+	funcGPS2()
 	}
 
 elseif(COMMAND=="!status") {

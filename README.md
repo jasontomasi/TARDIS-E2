@@ -122,6 +122,9 @@ Enables physlock to prevent it falling through the floor if you are currently in
 **!gps**
 Targets a random wiremod GPS, travels to it, and materialises on it
 
+**!gps2**
+Same as !gps but keeps you in the vortex for a period time based on distance calculation
+
 **!death**
 When player dies, TARDIS will mat at player's spawn location
 

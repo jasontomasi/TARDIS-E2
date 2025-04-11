@@ -60,7 +60,7 @@ if(first() | dupefinished()) {
 
 function funcPlayerDeath() {
 
-	if(TARDIS:tardisHealth() == 0){
+	if(TARDIS:tardisHealth() <= 2){
 		print("ERROR: TARDIS damaged")
 		return
     }
@@ -76,16 +76,16 @@ function funcPlayerDeath() {
 		TARDIS:tardisPower()
     }
 
+	if(TARDIS:tardisPhyslocked()==0){
+		TARDIS:tardisPhyslock()
+    }
+	
 	if(TARDIS:tardisFlying()==0){
 		TARDIS:tardisFlightmode()
     }
 
 	if(TARDIS:tardisIsHADS()==1){
 		TARDIS:tardisHADS()
-    }
-
-	if(TARDIS:tardisPhyslocked()==0){
-		TARDIS:tardisPhyslock()
     }
 
 	if(TARDIS:tardisLongflighted()==1){
@@ -312,7 +312,8 @@ function funcTargetPlayer(ARGUMENT1:string)
 
 
 
-function funcFlight() {
+function funcFlight()
+	{
 
 	if(TARDIS:tardisFlying()==0) {
 		FlightOnSuccess = TARDIS:tardisFlightmode()
@@ -412,9 +413,12 @@ function funcLockdoor()
             if(TARDIS:tardisPowered()==0){
 		              TARDIS:tardisPower()
             }
+			if(TARDIS:tardisOpened()==1){
+				TARDIS:tardisDoor()
+			}
             if(TARDIS:tardisLocked()==0){
-		              TARDIS:tardisLock()
-					  print("Door locked")
+		            TARDIS:tardisLock()
+					print("Door locked")
             }
 			elseif(TARDIS:tardisLocked()==1){
 		              TARDIS:tardisLock()
@@ -425,7 +429,15 @@ function funcLockdoor()
 
 function funcPhyslock()
 	{
-		              TARDIS:tardisPhyslock()
+		TARDIS:tardisPhyslock()
+
+			if(TARDIS:tardisPhyslocked() == 0) {
+				print("Physical lock: OFF")
+            }
+			elseif(TARDIS:tardisPhyslocked() == 1) {
+				print("Physical lock: ON")
+            }
+
 } # END FUNCTION
 
 
@@ -440,11 +452,11 @@ function funcMaterialise()
 function funcHealth()
 	{
             if(TARDIS:tardisHealth() > 20){
-			print("Health: " +TARDIS:tardisHealth() + "%")
+			print("Health: " + TARDIS:tardisHealth() + "%")
             }
             elseif(TARDIS:tardisHealth() <= 20){
 			print("* WARNING *")
-			print("Health: " +TARDIS:tardisHealth() + "%")
+			print("Health: " + TARDIS:tardisHealth() + "%")
             }
 } # END FUNCTION
 
@@ -481,6 +493,7 @@ function funcSneak()
 			if(TARDIS:tardisPowered()==0){
 		    TARDIS:tardisPower()
             }
+			TARDIS:tardisPhase()
 			
             if(TARDIS:tardisVisible()==1){
 		              print("Cloak: OFF")
@@ -516,10 +529,12 @@ function funcWhere()
 
 function funcReturn()
 	{
-            if(TARDIS:tardisPowered()==0){
-		    TARDIS:tardisPower()
-            }
-            TARDIS:tardisFastReturn()
+			if(TARDIS:tardisHealth() >= 13 && TARDIS:tardisArtronEnergy() >= 10) {
+				if(TARDIS:tardisPowered()==0){
+					TARDIS:tardisPower()
+				}				
+				TARDIS:tardisFastReturn()
+			}
 } # END FUNCTION
 
 
@@ -592,8 +607,9 @@ function funcGPS2()
 		TravelDistance = TravelDistCalc:length()
 		TravelDistIncr = TravelDistance * 2 + 30000
 
-	print("Plotting path to ", GPSLOCATION2)
-	print("Arrival ETA is", TravelDistIncr)
+	print("Plotting path to:", GPSLOCATION2)
+	print("Travel distance:", TravelDistance)
+	print("Arrival ETA is:", TravelDistIncr / 1000, "seconds.")
 
 	timer("TARDISdrift2", TravelDistIncr)
 	}
@@ -609,7 +625,7 @@ function funcStatus()
 		              print("Location: -VORTEX-")
             }
             if(TARDIS:tardisInVortex()==0 & TARDIS:tardisMoving()==0){
-		              print("Location: Materialised at ",TARDIS:pos())
+		              print("Location: ",TARDIS:pos())
             }
             if(TARDIS:tardisMoving()==1){
 		              print("Location: -DEMAT/REMAT-")
@@ -633,7 +649,7 @@ function funcStatus()
 		              print("HADS: OFF")
             }
 			if(TARDIS:tardisSelfrepairing()==1){
-		              print("* REPAIRING *")
+		              print("-REPAIRING-")
             }
 			print("Fuel: ", TARDIS:tardisArtronEnergy(), " / ", FuelPercent,"%")
             print("Health: ", TARDIS:tardisHealth())
@@ -825,6 +841,14 @@ if (ESCAPE&~ESCAPE) {
 
 if (BARGE&~BARGE) {
 	funcBarge()
+}
+
+if (HANDBRK&~HANDBRK) {
+	funcHandbrake()
+}
+
+if (SNEAK&~SNEAK) {
+	funcSneak()
 }
 
 if (REPAIR&~REPAIR) {

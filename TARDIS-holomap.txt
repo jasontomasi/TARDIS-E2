@@ -69,8 +69,6 @@ concmd("wire_expression2_quotasoft 500000")
 
 
 
-
-
 function funcFindTargets() {
 
     findByClass("gmod_tardis")
@@ -111,7 +109,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
 	#holoAng(Index,TargetTardis:angles())
 
 
-if (TargetTardis:tardisHealth() < 20) {
+if (TargetTardis:tardisHealth() <= 20) {
     holoColor(Index, vec(255,0,0))
 
 			if (!holoEntity(Index+20):isValid()) {
@@ -128,7 +126,7 @@ if (TargetTardis:tardisHealth() < 20) {
 }
 
 # If any TARDIS was previously damaged but is now repaired, it would've had circle holo (ID of Index+20), so delete the circle
-if (TargetTardis:tardisHealth() >= 20) {
+if (TargetTardis:tardisHealth() > 20) {
     if (holoEntity(Index+20):isValid()) {
             holoDelete(Index+20)
     }
@@ -164,7 +162,7 @@ if (TargetTardis:tardisInVortex() == 1) {
     holoPos(Index, entity():pos() + vec(randint(-100,100), randint(-100,100), randint(20,120)))
 }
 
-if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() < 20)) {
+if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() <= 20)) {
     holoMaterial(Index, "")
     holoRenderFX(Index, 15)
     holoColor(Index, vec(255,0,0))
@@ -173,7 +171,7 @@ if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() < 20)) {
 	holoAng(Index, ang(0,0,0))
 }
 
-if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() >= 20)) {
+if ((TargetTardis:tardisInVortex() == 0) & (TargetTardis:tardisHealth() > 20)) {
     holoMaterial(Index, "")
     holoRenderFX(Index, 15)
     holoColor(Index, vec(61,255,255))

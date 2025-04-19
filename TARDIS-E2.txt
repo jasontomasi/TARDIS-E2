@@ -1,5 +1,5 @@
 @name TARDIS Barge
-@inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS FLIGHT DRIFT
+@inputs DEMAT MAT ESCAPE BARGE REPAIR POWER HADS GPS LOCK HEALTH WHERE STATUS COMETOME FASTRETURN PHYS FLIGHT DRIFT HANDBRK SNEAK
 @persist TARDIS:entity TARDISINTERIOR:entity Holo:entity HOLONUMBER:number A B1 B2 B3 Demat Mat Position0:vector Position1:vector CORNER1:vector CORNER2:vector Position1B:vector DeathRescue:number ARTRONFUEL Mass RPM Veloc DRIFTSPIN FuelPercent TravelDistance
 
 
@@ -55,6 +55,51 @@ if(first() | dupefinished()) {
 	DRIFTSPIN = 0
 	# OWNER = TARDIS:owner()
 	FuelPercent = TARDIS:tardisArtronEnergy() / TARDIS:tardisMaxArtronEnergy() * 100
+
+
+function preFlightCheck() {
+
+FLIGHTREADY = 0
+
+	if(TARDIS:tardisHealth() <= 12) {
+		print("ERROR: TARDIS damaged.")
+		return
+    }
+	if(TARDIS:tardisArtronEnergy() <= 12) {
+		print("ERROR: TARDIS fuel too low.")
+		return
+	}
+	if(TARDIS:tardisSelfrepairing() == 1) {
+		print("ERROR: TARDIS repairing.")
+		return
+    }
+	if(TARDIS:tardisMoving() == 1) {
+		print("ERROR: TARDIS already moving...")
+		return
+	}
+
+	if(TARDIS:tardisHealth() >= 13 && TARDIS:tardisArtronEnergy() >= 13) {
+		if(TARDIS:tardisPowered() == 0) {
+			TARDIS:tardisPower()
+		}
+		if(TARDIS:tardisOpened() == 1) {
+			TARDIS:tardisDoor()	
+		}
+		if(TARDIS:tardisBraking() == 1) {
+		    TARDIS:tardisHandbrake()
+        }
+		if(TARDIS:tardisIsHADS() == 1) {
+			TARDIS:tardisHADS()
+		}
+		if(TARDIS:tardisLocked() == 1) {
+		    TARDIS:tardisLock()
+        }
+		
+		
+	}
+
+} # END FUNCTION
+
 
 
 
@@ -422,7 +467,7 @@ function funcLockdoor()
             }
 			elseif(TARDIS:tardisLocked()==1){
 		              TARDIS:tardisLock()
-					  print("Door unlocked")
+					print("Door unlocked")
             }
 } # END FUNCTION
 
@@ -455,8 +500,7 @@ function funcHealth()
 			print("Health: " + TARDIS:tardisHealth() + "%")
             }
             elseif(TARDIS:tardisHealth() <= 20){
-			print("* WARNING *")
-			print("Health: " + TARDIS:tardisHealth() + "%")
+			print("**WARNING** Health: " + TARDIS:tardisHealth() + "%")
             }
 } # END FUNCTION
 
@@ -522,7 +566,7 @@ function funcWhere()
             print("Location: Materialised at ",TARDIS:pos())
             }
             if(TARDIS:tardisMoving()==1){
-		    print("Location: - DEMAT/REMAT -")
+		    print("Location: -DEMAT/REMAT-")
             }
 } # END FUNCTION
 
@@ -747,7 +791,7 @@ if(clk("TARDISdrift1")) {
 }
 
 if(clk("TARDISdrift2")) {
-    if(TARDIS:tardisInVortex()==1){
+    if(TARDIS:tardisInVortex() == 1) {
 			TARDIS:tardisMaterialise()
     }
 }

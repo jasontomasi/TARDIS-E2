@@ -1,6 +1,6 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN FINDBAYS
-@persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2POS1:vector E2POS2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector LandingBayGPS:string Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector TargetTARDIS:entity HoloSwirlPos:vector HoloSwirlScale HoloSwirlAlpha X1 X2 X3 X4 X5
+@persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2POS1:vector E2POS2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector LandingBayGPS:string Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector TargetTARDIS:entity HoloSwirlPos:vector HoloSwirlScale HoloSwirlAlpha HoloSwirlMaterial:string X1 X2 X3 X4 X5
 
 runOnChat(1)
 interval(200)
@@ -8,7 +8,7 @@ interval(200)
 # holoAng(98, holoEntity(98):angles() + ang(vec(0,6/0.75,0)))
 
 E2POS1 = entity():toWorld(vec(0,0,8))
-E2POS2 = entity():toWorld(vec(0,0,45))
+E2POS2 = entity():toWorld(vec(0,0,5))
 
 #holoAng(90, entity():angles())
 #holoAng(95, entity():angles())
@@ -88,13 +88,14 @@ concmd("wire_expression2_quotasoft 500000")
 # CUSTOMISE THESE OPTIONS 
     LandingBayRange = 1024
     LandingBayMaterial = "models/props_combine/cit_beacon"
-    LandingBayShield = "models/alyx/emptool_glow"
-    LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
+    LandingBayShield = "models/alyx/emptool_glow"  # Models/effects/comball_sphere, sprites/tp_beam001, effects/combineshield/comshieldwall, models/alyx/emptool_glow
+    LandingBayColor = vec(0,255,63) # vec(randint(50,255),randint(50,255),randint(50,255))
     LandingBayGPS = "models/Magnusson_Teleporter/magnusson_teleporter_fxglow1"
 
-	   HoloSwirlPos = entity():pos() + vec(0,0,90)
+	HoloSwirlPos = entity():pos() + vec(0,0,90)
     HoloSwirlScale = 2.5
     HoloSwirlAlpha = 255
+	HoloSwirlMaterial = "models/props_combine/cit_beacon"  # models/props_combine/cit_beacon, models/props_combine/portalball001_sheet
 
 # ORANGE (255, 93, 0)
 # PURPLE (255,70,255)
@@ -229,7 +230,7 @@ Index = 0
 
 foreach(Index,TargetTardis:entity = Tardises) {
     
-    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0 & TargetTardis:tardisSelfrepairing() == 0) {
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 13 & TargetTardis:tardisSelfrepairing() == 0 & TargetTardis:tardisArtronEnergy() >= 12) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
@@ -322,7 +323,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
     TardisHeight = TargetTardis:boxSize():z()
     TardisHalfHeight = TardisHeight / 2
 
-    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 0 & TargetTardis:tardisSelfrepairing() == 0) {
+    if (TargetTardis:isValid() & TargetTardis:tardisHealth() > 13 & TargetTardis:tardisSelfrepairing() == 0 & TargetTardis:tardisArtronEnergy() >= 12) {
 
     ChosenGPS = GPSes[Index,entity]
     TargetGPS = ChosenGPS:pos()
@@ -331,7 +332,7 @@ foreach(Index,TargetTardis:entity = Tardises) {
     holoCreate(Index)
     holoPos(Index, vec(TargetGPS:x(), TargetGPS:y(), TargetGPS:z()+TardisHalfHeight))
     holoAng(Index, ChosenGPS:angles())
-    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+30,TargetTardis:boxSize():y()+30,TargetTardis:boxSize():z()+5))
+    holoScaleUnits(Index, vec(TargetTardis:boxSize():x()+40,TargetTardis:boxSize():y()+40,TargetTardis:boxSize():z()+17))
     holoModel(Index, "cylinder")
     holoMaterial(Index, LandingBayShield)
     holoColor(Index, LandingBayColor,255)
@@ -348,11 +349,11 @@ foreach(Index,TargetTardis:entity = Tardises) {
     holoColor(Index+200, vec(250,0,0), 200)
 
 
-    if( (TargetTardis:tardisPowered()==0) & (TargetTardis:tardisArtronEnergy() >4 ) ) {
+    if(TargetTardis:tardisPowered()==0) {
 		TargetTardis:tardisPower()
     }
 
-    if ((TargetTardis:tardisHealth() > 0) & (TargetTardis:tardisHealth() <= 20)) {
+    if (TargetTardis:tardisHealth() <= 20) {
 		
         holoMaterial(Index, LandingBayShield)
         holoColor(Index, vec(255,0,0))
@@ -376,9 +377,9 @@ foreach(Index,TargetTardis:entity = Tardises) {
     if(TargetTardis:tardisLongflighted()==1) {
 		TargetTardis:tardisLongflight()
 	        }
-    if(TargetTardis:tardisLocked()==0) {
-		TargetTardis:tardisLock()
-	        }
+    if(TargetTardis:tardisOpened()==1) {
+			TargetTardis:tardisDoor()	
+        	}  
     if(TargetTardis:tardisVisible()==0) {
 		TargetTardis:tardisPhase()
 	        }
@@ -560,14 +561,14 @@ if(clk("TimerOne")) {
 	SEQ1 = 1
 	
 	# Make the swirling rings around the console
-	   holoCreate(250, HoloSwirlPos+vec(0,0,15*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,200,0,255),"models/hunter/tubes/tube2x2x025.mdl")
-    holoCreate(251, HoloSwirlPos+vec(0,0,10*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,0,255,255),"models/hunter/tubes/tube2x2x025.mdl")
-    holoCreate(252, HoloSwirlPos+vec(0,0,5*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(63,255,255,255),"models/hunter/tubes/tube2x2x025.mdl")
-    holoCreate(253, HoloSwirlPos+vec(0,0,0*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(33,255,0,255),"models/hunter/tubes/tube2x2x025.mdl")
-    holoCreate(254, HoloSwirlPos+vec(0,0,-5*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,0,97,255),"models/hunter/tubes/tube2x2x025.mdl")
+	   holoCreate(250, HoloSwirlPos+vec(0,0,15*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,200,0,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
+    holoCreate(251, HoloSwirlPos+vec(0,0,10*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,0,255,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
+    holoCreate(252, HoloSwirlPos+vec(0,0,5*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(63,255,255,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
+    holoCreate(253, HoloSwirlPos+vec(0,0,0*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(33,255,0,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
+    holoCreate(254, HoloSwirlPos+vec(0,0,-5*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,0,97,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
         
     for(I = 250, 254) {
-        holoMaterial(I, "models/props_combine/portalball001_sheet")
+        holoMaterial(I, HoloSwirlMaterial)
         holoParent(I, entity())
     }
 

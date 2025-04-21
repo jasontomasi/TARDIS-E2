@@ -1,6 +1,6 @@
 @name SIDRAT landing bay (IntuitiveNZ)
 @inputs RECALL RETURN FINDBAYS
-@persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2POS1:vector E2POS2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector LandingBayGPS:string Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector TargetTARDIS:entity HoloSwirlPos:vector HoloSwirlScale HoloSwirlAlpha HoloSwirlMaterial:string X1 X2 X3 X4 X5
+@persist [Explodable1 Explodable2 Explodable3 Explodable4]:entity TardisMass ParadoxRandom ParadoxTimer Tardises:array GPSes:array TardisCount:number GPSCount:number LandingBayRange:number E2POS1:vector E2POS2:vector LandingBayMaterial:string LandingBayShield:string LandingBayColor:vector LandingBayGPS:string Pyraorbit1 Pyraorbit2 Pyraorbit3 T Cring Cring2 Timer SEQ1 Nearby:vector TargetTARDIS:entity HoloSwirlPos:vector HoloSwirlScale HoloSwirlAlpha HoloSwirlMaterial:string X1 X2 X3 X4 X5 HoloPeopleConsole:number HoloPeopleIncre:number HOLOPERSONSPACING:vector SPACINGRADIUS
 
 runOnChat(1)
 interval(200)
@@ -89,9 +89,11 @@ concmd("wire_expression2_quotasoft 500000")
     LandingBayRange = 1024
     LandingBayMaterial = "models/props_combine/cit_beacon"
     LandingBayShield = "models/alyx/emptool_glow"  # Models/effects/comball_sphere, sprites/tp_beam001, effects/combineshield/comshieldwall, models/alyx/emptool_glow
-    LandingBayColor = vec(0,255,63) # vec(randint(50,255),randint(50,255),randint(50,255))
+    LandingBayColor = vec(255,255,255) # vec(randint(50,255),randint(50,255),randint(50,255))
     LandingBayGPS = "models/Magnusson_Teleporter/magnusson_teleporter_fxglow1"
 
+	HoloPeopleIncre = 0
+	HoloPeopleConsole = 6
 	HoloSwirlPos = entity():pos() + vec(0,0,90)
     HoloSwirlScale = 2.5
     HoloSwirlAlpha = 255
@@ -123,6 +125,7 @@ concmd("wire_expression2_quotasoft 500000")
     #holoColor(98, vec(255,70,255))
     holoScale(98, vec(7,7,7))  # 190
     holoRenderFX(98, 0)
+    holoDisableShading(98, 1)
 
  # PYRAMID
     #holoCreate(97)
@@ -134,6 +137,7 @@ concmd("wire_expression2_quotasoft 500000")
     #holoScaleUnits(97, vec(200,200,200))
     #holoAng(97, entity():angles() + ang(0,0,-180))
     #holoAlpha(97, 200)
+    #holoDisableShading(97, 1)
 
  # CONSOLE
     holoCreate(96)
@@ -142,6 +146,7 @@ concmd("wire_expression2_quotasoft 500000")
     #holoModel(96, "models/doctorwho1200/hellbent/console.mdl")
     holoModel(96, "models/doctormemes/keltyj/console.mdl")
     holoAng(96, entity():angles())
+    holoDisableShading(96, 1)
 
  # TIME ROTOR
     holoCreate(95)
@@ -151,6 +156,7 @@ concmd("wire_expression2_quotasoft 500000")
     #holoMaterial(95, "models/alyx/emptool_glow")
     holoColor(95, vec(255,255,255))  #(109,109,109))
     holoAng(95, entity():angles())
+    holoDisableShading(95, 1)
 
  # CONSOLE ATTACHMENT
     #holoCreate(90)
@@ -160,12 +166,37 @@ concmd("wire_expression2_quotasoft 500000")
     #holoMaterial(90, "models/alyx/emptool_glow")
     #holoColor(90, vec(255,223,127))
     #holoAng(90, entity():angles())
+	#holoDisableShading(90, 1)
 
  # TIME ROTOR ILLUMINATION
     #lightCreate(1)
     #lightColor(1, 20000 * vec(255,50,0))
     #lightParent(1, entity())
     #lightDistance(1, 50000)
+
+ # CONSOLE PEOPLE
+for (I = 300, 300+HoloPeopleConsole) {
+
+	HoloPeopleIncre = HoloPeopleIncre + 1
+    SPACINGRADIUS = max(HoloPeopleConsole * 2/pi()/2, 60)
+    HOLOPERSONSPACING = vec(SPACINGRADIUS,0,0):rotate(0,-(360/HoloPeopleConsole*HoloPeopleIncre + Cur),0)
+
+		holoCreate(I, entity():pos())
+		holoAlpha(I, 0)
+		holoPos(I, entity():pos() + HOLOPERSONSPACING)
+		holoModel(I, "models/player/gman_high.mdl")
+		#holoMaterial(I, "models/props_combine/tpballglow")
+		holoAnim(I, "")   # run_fist, taunt_robot
+		holoRenderFX(I, 0)
+		holoDisableShading(I, 1)
+		holoParent(I, entity())
+
+	DIFF1 = holoEntity(I):pos() - entity():pos()
+	DIFF2 = DIFF1:toAngle()  + ang(0,180,0)
+
+		holoAng(I, DIFF2)
+}
+
 
 
 
@@ -435,8 +466,6 @@ foreach(Index,ClearGPS:entity = GPSes) {
     TardisCount = findToArray():count()
 
 	if(TardisCount >= 1) {
-		
-		print("DEBUG: Y")
 
 foreach(Index,ClearTARDIS:entity = Tardises) {
     
@@ -462,7 +491,7 @@ foreach(Index,ClearTARDIS:entity = Tardises) {
 }
  }
 	elseif(TardisCount == 0) {
-		print("DEBUG: N")
+		print("No SIDRATs found!")
 	}
 }
 
@@ -486,7 +515,7 @@ if(chatClk(owner())) {
 
 if(COMMAND=="!recall") {
     hideChat(1)
-    timer("TimerOne",2000)
+    timer("TimerOne",50)
 }
 
 elseif(COMMAND=="!clear") {
@@ -501,7 +530,7 @@ elseif(COMMAND=="!clear") {
 # BEGIN INPUT BUTTONS
 
 if (RECALL&~RECALL) {
-	timer("TimerOne",1000)
+	timer("TimerOne",50)
 }
 
 if (RETURN&~RETURN) {
@@ -557,11 +586,28 @@ if(clk("HoloRingSwirl")) {
 
 
 if(clk("TimerOne")) {
+	# Console people
+	for (I = 300, 300+HoloPeopleConsole) {
+        holoRenderFX(I, 1)
+        holoAlpha(I, 255)
+        holoAnim(I, "run_fist")
+    }
+    timer("TimerTwo", 5000)
+}
+
+
+if(clk("TimerTwo")) {
 
 	SEQ1 = 1
 	
+	# Console people
+	for (I = 300, 300+HoloPeopleConsole) {
+        holoRenderFX(I, 3)
+        holoAlpha(I, 70)
+    }
+	
 	# Make the swirling rings around the console
-	   holoCreate(250, HoloSwirlPos+vec(0,0,15*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,200,0,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
+	holoCreate(250, HoloSwirlPos+vec(0,0,15*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,200,0,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
     holoCreate(251, HoloSwirlPos+vec(0,0,10*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(255,0,255,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
     holoCreate(252, HoloSwirlPos+vec(0,0,5*HoloSwirlScale), vec(1*HoloSwirlScale,1*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(63,255,255,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
     holoCreate(253, HoloSwirlPos+vec(0,0,0*HoloSwirlScale), vec(1.2*HoloSwirlScale,1.2*HoloSwirlScale,0.25*HoloSwirlScale), ang(0,0,0),vec4(33,255,0,HoloSwirlAlpha),"models/hunter/tubes/tube2x2x025.mdl")
@@ -624,20 +670,20 @@ if(clk("TimerOne")) {
     #holoParent(96, holoEntity(98))
 
     funcFindSidrats()
-    timer("TimerTwo", 4000)
-}
-
-if(clk("TimerTwo")) {
-    funcFindLandingBay()
-    timer("TimerThree", 2000)
+    timer("TimerThree", 4000)
 }
 
 if(clk("TimerThree")) {
-    funcPrimingLandingBays()
-	timer("TimerFour", 6000)
+    funcFindLandingBay()
+    timer("TimerFour", 2000)
 }
 
 if(clk("TimerFour")) {
+    funcPrimingLandingBays()
+	timer("TimerFive", 6000)
+}
+
+if(clk("TimerFive")) {
     funcRecallSidrats()
 }
 
@@ -694,6 +740,13 @@ if(clk("deleteholo")) {
     holoMaterial(95, "")
     holoColor(95, vec(255,255,255))  #(109,109,109))
     
+	# Console people
+	for (I = 300, 300+HoloPeopleConsole) {
+        holoRenderFX(I, 0)
+        holoAlpha(I, 0)
+        holoAnim(I, "")
+    }
+	
     SEQ1 = 0
 }
 
